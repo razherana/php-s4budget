@@ -57,15 +57,15 @@
 
       <div class="icons-container">
 
-      <i class="fa fa-list icons"></i>
-
-      <i class="fa fa-list icons"></i>
-
-      <i class="fa fa-list icons"></i>
-
-      <i class="fa fa-list icons"></i>
-
-      <i class="fa fa-list icons"></i>
+        <?php foreach($departements as $dept_url => $dept_infos): ?>
+          <a href="<?= $dept_url ?>">
+            <i class="<?= $dept_infos[1] ?> icons" tabindex="1" data-tooltip data-bs-placement="right" title="<?= $dept_infos[0] ?>">
+              <span class="visually-hidden">
+                <?= $dept_infos[0] ?>
+              </span>
+            </i>
+          </a>
+        <?php endforeach; ?>
 
       </div>
     </div>
@@ -74,11 +74,9 @@
     <div id="content">
 
       <div class="d-flex justify-content-between">
-        <h2>Dashboard</h2>
+        <h2>Bienvenue, <?= auth()->get()->name ?></h2>
         <button class="btn btn-primary rounded-pill">Add new <i class="fa fa-plus"></i></button>
       </div>
-
-
 
     </div>
   </div>
@@ -89,6 +87,32 @@
   <!-- Scripts to default libs -->
   <script src="<?= route('assets/bs5.3/js/bootstrap.bundle.min.js') ?>"></script>
   <script src="<?= route('assets/fa/js/all.min.js') ?>"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-tooltip]'))
+      var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+          delay: {
+            "show": 50,
+            "hide": 50
+          }
+        })
+      })
+    });
+
+    // Add active class to the icon that matches the current page
+
+    var current_url = window.location.href;
+    var icons = document.querySelectorAll('.icons');
+
+    icons.forEach(icon => {
+      if (icon.parentElement.href == current_url)
+        icon.classList.add('active');
+      else
+        icon.classList.remove('active');
+    });
+  </script>
 </body>
 
 </html>

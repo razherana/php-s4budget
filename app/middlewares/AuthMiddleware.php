@@ -4,12 +4,12 @@ namespace app\middlewares;
 
 use Flight;
 
-class AdminAuthMiddleware
+class AuthMiddleware
 {
   public function before()
   {
-    if (!auth("admin")->loggedin()) {
-      Flight::redirect("/admin/login");
+    if (!auth()->loggedin()) {
+      Flight::redirect("/login");
       return false;
     }
     return true;

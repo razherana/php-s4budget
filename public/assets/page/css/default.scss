@@ -1,3 +1,5 @@
+$prim-color: #0d6efd;
+$prim-color-shade-1: #e1edff;
 $sec-color: #fafafa;
 $sec-color-shade-1: #f0f0f0;
 $navbar-h: 90px;
@@ -12,7 +14,7 @@ body {
   }
 
   .navicons {
-    color: #0d6efd;
+    color: $prim-color;
     font-size: 1.3rem;
   }
 }
@@ -26,12 +28,12 @@ body {
     height: calc(100vh - $navbar-h);
     padding: 2em;
 
-    $color : #b4b4b4;
+    $color: #b4b4b4;
 
     .menu-title {
       color: $color;
       text-transform: uppercase;
-      font-size: .8em;
+      font-size: 0.8em;
       margin-bottom: 1.3em;
       text-align: center;
     }
@@ -43,21 +45,28 @@ body {
       align-items: center;
       gap: 1em;
 
-      .icons {
-        color: $color;
-        border-radius: 9999px;
-        padding: 19px;
-        font-size: 14px;
-        transition: all .3s;
-        cursor: pointer;
-      }
+      a {
+        display: contents;
 
-      .icons:hover {
-        color: black;
-        background-color: $sec-color-shade-1;
+        .icons {
+          color: $color;
+          border-radius: 9999px;
+          padding: 19px;
+          font-size: 14px;
+          transition: all 0.3s;
+        }
+
+        .icons:hover {
+          color: black;
+          background-color: $sec-color-shade-1;
+        }
+
+        .icons.active {
+          color: $prim-color;
+          background-color: $prim-color-shade-1;
+        }
       }
     }
-
   }
 
   #content {

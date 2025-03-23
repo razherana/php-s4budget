@@ -70,7 +70,7 @@ return [
 	'database' => [
 		// uncomment the below 4 lines for mysql
 		 'host' => 'localhost',
-		 'dbname' => 'ecommerceProjetS4',
+		 'dbname' => 'Gestion_budget',
 		 'user' => 'razherana',
 		 'password' => ''
 

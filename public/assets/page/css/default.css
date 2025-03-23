@@ -33,17 +33,23 @@ body {
   align-items: center;
   gap: 1em;
 }
-#container .sidebar .icons-container .icons {
+#container .sidebar .icons-container a {
+  display: contents;
+}
+#container .sidebar .icons-container a .icons {
   color: #b4b4b4;
   border-radius: 9999px;
   padding: 19px;
   font-size: 14px;
   transition: all 0.3s;
-  cursor: pointer;
 }
-#container .sidebar .icons-container .icons:hover {
+#container .sidebar .icons-container a .icons:hover {
   color: black;
   background-color: #f0f0f0;
+}
+#container .sidebar .icons-container a .icons.active {
+  color: #0d6efd;
+  background-color: #e1edff;
 }
 #container #content {
   background-color: white;

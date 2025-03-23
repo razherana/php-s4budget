@@ -1,6 +1,9 @@
 <?php
 
+use app\controllers\AuthController;
+use app\controllers\IndexController;
 use app\controllers\TestController;
+use app\middlewares\AuthMiddleware;
 use flight\Engine;
 use flight\net\Router;
 
@@ -12,4 +15,15 @@ use flight\net\Router;
 // for testing purposes
 $tests = new TestController($app);
 
-$router->get('/', [$tests, 'dashboard']);
+// Logins
+$authController = new AuthController($app);
+
+$router->get('/login', [$authController, 'login']);
+$router->post('/login', [$authController, 'doLogin']);
+$router->get('/logout', [$authController, 'logout']);
+
+// Main container to keep all routes require a login
+$router->group('', function () use ($app, $router) {
+  $indexController = new IndexController($app);
+  $router->get('/', [$indexController, 'dashboard']);
+}, [new AuthMiddleware]);
