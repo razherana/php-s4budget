@@ -9,6 +9,7 @@ use app\models\Categorie;
 use app\models\Departement;
 use app\models\Prevision;
 use app\models\Type;
+use app\output\pdf\PdfOutput;
 use DateTime;
 use flight\Engine;
 
@@ -265,11 +266,11 @@ class DepartementController
       ];
     }
 
-    piewpiew('tests.resultat-pdf', compact('resultatParMois', 'departement', 'annee') + [
-      'budgetInitial' => $ogBudget,
-      'budgetFinal' => $budgetFinal,
-      'mois' => $mois
-    ]);
+    $pdf = new PdfOutput($departement->name, $resultatParMois, $annee, $mois, $ogBudget, $budgetInitialMois);
+    $pdf->AddPage();
+    $pdf->TitleDetails();
+    $pdf->CreateTables();
+    $pdf->Output('', 'rapport.pdf');
   }
 
   public function create()
