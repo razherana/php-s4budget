@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use flight\Engine;
+use app\controllers\FPDF;
 
-class PdfController
+class PdfController extends FPDF
 {
     /** @var Engine */
     protected Engine $app;
@@ -18,10 +19,7 @@ class PdfController
     {
         $this->app = $app;
     }
-// require('fpdf.php');
-
-class PDF extends FPDF
-{
+  
     function Header() {
         $this->SetFont('Arial', 'B', 14);
         $this->Cell(190, 10, 'GESTION FINANCIERE BY HERANA , FENO ET DIARY', 0, 1, 'C');
@@ -54,8 +52,8 @@ class PDF extends FPDF
             ['Depense', 1230, 1231, 12],
             ['Recette', 123, 21321, 1231],
             ['Total', 12213, 12312, 12332],
-            ['Budget Initial', 12312123, '', ''],
-            ['Budget Final', 111231231, '', '']
+            ['Budget Initial', 12312123, '-', '-'],
+            ['Budget Final', 111231231, '-', '-']
         ];
 
         foreach ($data as $row) {
@@ -68,10 +66,12 @@ class PDF extends FPDF
     }
 
 }
-// Instanciation du PDF
-$pdf = new PDF();
-$pdf->AddPage();
-$pdf->CreateTable();
-$pdf->Output('D', 'rapport.pdf'); // Téléchargement
 
-}
+// NB : OTRAN ITO AMIZAY NO ANTSOINA REHEFA ANAO AN LE IZ DE LE $DATA IO NO MIOVA HO LASA ARGUMENT 
+// // Instanciation du PDF
+// $pdf = new PdfController($app);
+// $pdf->AddPage();
+// $pdf->CreateTable();
+// $pdf->Output('D', 'rapport.pdf'); // Téléchargement
+
+
