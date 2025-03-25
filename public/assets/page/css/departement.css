@@ -37,6 +37,12 @@
 #content .ncontainer-table .ntable tr.categorie-data .ntable-inner-1 th {
   padding: 0.6em 1em;
 }
+#content .ncontainer-table .ntable tr.plusplus, #content .ncontainer-table .ntable tr.categorie-data .ntable-inner-1 tr.plusplus {
+  background-color: rgba(174, 255, 174, 0.4509803922);
+}
+#content .ncontainer-table .ntable tr.moinsmoins, #content .ncontainer-table .ntable tr.categorie-data .ntable-inner-1 tr.moinsmoins {
+  background-color: rgba(255, 173, 173, 0.4039215686);
+}
 #content .ncontainer-table .ntable thead tr th, #content .ncontainer-table .ntable tr.categorie-data .ntable-inner-1 thead tr th {
   text-transform: uppercase;
   color: #a4a4a4;

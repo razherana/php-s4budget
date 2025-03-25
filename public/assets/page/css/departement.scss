@@ -46,6 +46,14 @@
         padding: $table-padding;
       }
 
+      tr.plusplus {
+        background-color: $plusplus;
+      }
+
+      tr.moinsmoins {
+        background-color: $moinsmoins;
+      }
+
       thead tr {
         th {
           text-transform: uppercase;

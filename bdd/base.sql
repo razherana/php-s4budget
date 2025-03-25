@@ -22,6 +22,7 @@ CREATE TABLE Budget (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_departement INT, 
     solde DECIMAL (15, 2),
+    locked INT NULL,
     updated_at TIMESTAMP,
     FOREIGN KEY (id_departement) REFERENCES Departement (id)
 );
@@ -50,3 +51,5 @@ CREATE TABLE Prevision (
     `date` DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (id_type) REFERENCES Type (id)
 );
+
+INSERT INTO `User` VALUES (1,'admin','admin@admin.com', '123', 0, 1);

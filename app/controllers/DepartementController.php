@@ -46,6 +46,7 @@ class DepartementController
     foreach ($types as $type) {
       if (empty($result[$type->id_categorie]))
         continue;
+
       $result_types[$type->id] = [
         'id' => $type->id,
         'designation' => $type->designation,
@@ -111,14 +112,6 @@ class DepartementController
       $v['previsions']['totalRealisation1'] = $totalRealisation1s[$v['id']] ?? 0;
       $v['previsions']['totalRealisation2'] = $totalRealisation2s[$v['id']] ?? 0;
 
-      // We make the size of the array the same
-      while (count($v['previsions']['previsions1']) < count($v['previsions']['previsions2'])) {
-        $v['previsions']['previsions1'][] = [];
-      }
-      while (count($v['previsions']['previsions1']) > count($v['previsions']['previsions2'])) {
-        $v['previsions']['previsions2'][] = [];
-      }
-
       $result[$v['id_categorie']]['types'][] = $v;
     }
 
@@ -144,6 +137,7 @@ class DepartementController
     $departementModels = [$departement];
 
     $budget = Budget::getCurrent($id);
+    $budgetModel = $budget;
 
     $hasBudget = $budget !== 'Pas de Budget';
 
@@ -166,7 +160,9 @@ class DepartementController
       $budgetFinal = $budgetFinal . " Ar";
     }
 
-    piewpiew('pages.departement.departement', compact('departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal'));
+    $closedBudget = (bool) $budgetModel->locked;
+
+    piewpiew('pages.departement.departement', compact('departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal', 'closedBudget', 'budgetModel'));
   }
 
   public function create()

@@ -1,1 +1,0 @@
-<?php extract(Piewpiew\view\View::$view_vars['admin/dashboard/spa/home']->get_data()); ?><h1>Overview of Everything</h1>

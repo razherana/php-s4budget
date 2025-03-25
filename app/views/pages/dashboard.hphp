@@ -63,6 +63,12 @@
               Manage Users...
             </a>
           </li>
+          <li>
+            <a class="dropdown-item" href="<?= route('import') ?>">
+              <i class="fas fa-file-csv"></i>
+              Import CSV...
+            </a>
+          </li>
         </ul>
       </if>
 

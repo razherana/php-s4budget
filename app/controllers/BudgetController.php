@@ -61,4 +61,27 @@ class BudgetController
 
     $this->app->redirect('/departements/' . $id_departement);
   }
+
+  public function toggleLock($id)
+  {
+    $budget = Budget::find($id);
+
+    if ($budget == null) {
+      sezzion()->tempset('error', 'Le budget n\'existe pas');
+      $this->app->redirect('/');
+      return;
+    }
+
+    $budget->locked = $budget->locked ?? 0;
+    $budget->locked = ($budget->locked + 1) % 2;
+    $res = $budget->update();
+
+    if ($res) {
+      sezzion()->tempset('success', 'Budget locked/unlocked');
+    } else {
+      sezzion()->tempset('error', 'Failed to update budget');
+    }
+
+    $this->app->redirect('/departements/' . $budget->id_departement);
+  }
 }

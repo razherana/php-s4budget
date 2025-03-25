@@ -1,4 +1,4 @@
-<?php extract(Piewpiew\view\View::$view_vars['pages/dashboard']->get_data()); ?><!DOCTYPE html>
+<?php extract(Piewpiew\view\View::$view_vars['pages.dashboard']->get_data()); ?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -61,6 +61,12 @@
             <a class="dropdown-item" href="<?= route('users/manage') ?>">
               <i class="fa fa-user"></i>
               Manage Users...
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="<?= route('import') ?>">
+              <i class="fas fa-file-csv"></i>
+              Import CSV...
             </a>
           </li>
         </ul>

@@ -18,6 +18,7 @@ class Budget extends BaseModel
     'id',
     'id_departement',
     'solde',
+    "locked",
     'updated_at'
   ];
 

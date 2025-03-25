@@ -4,6 +4,7 @@ use app\controllers\AuthController;
 use app\controllers\BudgetController;
 use app\controllers\CategorieController;
 use app\controllers\DepartementController;
+use app\controllers\ImportController;
 use app\controllers\IndexController;
 use app\controllers\PrevisionController;
 use app\controllers\TestController;
@@ -29,11 +30,11 @@ $authController = new AuthController($app);
 $router->get('/login', [$authController, 'login']);
 $router->post('/login', [$authController, 'doLogin']);
 $router->get('/logout', [$authController, 'logout']);
+$router->post('/logout', [$authController, 'logout']);
 
 // Main container to keep all routes require a login
 $router->group('', function () use ($app, $router) {
   $indexController = new IndexController($app);
-
   $router->get('/', [$indexController, 'dashboard']);
 
   $departementController = new DepartementController($app);
@@ -61,4 +62,11 @@ $router->group('', function () use ($app, $router) {
   $userController = new UserController($app);
   $router->get('/users/manage', [$userController, 'list']);
   $router->post('/users/manage', [$userController, 'doCreate']);
+
+  $importController = new ImportController($app);
+  $router->get('/import', [$importController, 'form']);
+  $router->post('/import', [$importController, 'doImport']);
+
+  $budgetController = new BudgetController($app);
+  $router->get('/budgets/@id/lock', [$budgetController, 'toggleLock']);
 }, [new SuperAdminMiddleware]);

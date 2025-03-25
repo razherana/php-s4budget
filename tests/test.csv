@@ -1,0 +1,13 @@
+-Departement
+"Finance","fa fa-briefcase"
+"Compta","fas fa-money-bill"
+-Budget
+1,100000,"2025-03-25 00:00:00"
+2,200000,"2025-03-25 00:00:00"
+-Categorie
+"Immobilier",1
+"Nourriture",1
+-Type
+"Meubles",1
+-Prevision
+"Achat de 3 chaises",100000,120000,0,1,"2025-03-26 00:00:00"
