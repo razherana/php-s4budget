@@ -20,6 +20,20 @@ class IndexController
     $this->app = $app;
   }
 
+  /**
+   * Map departement models
+   * @param Departement[] $departementModels
+   */
+  public static function mapDepartementModels($departementModels)
+  {
+    $departements = [];
+
+    foreach ($departementModels as $departement)
+      $departements['/departements/' . $departement->id] = [$departement->name, $departement->icon ?? 'fa fa-building'];
+
+    return $departements;
+  }
+
   public function dashboard()
   {
     $authedUser = auth()->get();
@@ -30,24 +44,6 @@ class IndexController
       $departementModels = Departement::doquery()->where('id', '=', $authedUser->id_departement)->get();
     }
 
-    $randomIcons = [
-      'fa fa-building',
-      'fa fa-briefcase',
-      'fa fa-users',
-      'fa fa-cogs',
-      'fa fa-balance-scale',
-      'fa fa-balance-scale-right',
-      'fa fa-balance-scale-left',
-    ];
-
-    $departements = [];
-    $i = 0;
-
-    foreach ($departementModels as $departement) {
-      $departements['/departements/' . $departement->id] = [$departement->name, $randomIcons[$i]];
-      $i = ($i + 1) % count($randomIcons);
-    }
-
-    piewpiew('pages.dashboard', ['departements' => $departements]);
+    piewpiew('pages.dashboard', ['departements' => self::mapDepartementModels($departementModels)]);
   }
 }

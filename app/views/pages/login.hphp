@@ -13,18 +13,7 @@
 <body>
 
   <div class="container">
-    <if condition="!empty($error = sezzion()->tempget('error'))">
-      <div
-        class="alert alert-danger alert-dismissible fade show mt-3 col-md-9 mx-auto"
-        role="alert">
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"></button>
-        <strong>Error</strong> <?= $error ?>
-      </div>
-    </if>
+    <include components.errorsuccess />
 
     <div class="row justify-content-center my-5">
       <div class="col-md-4">
@@ -36,11 +25,11 @@
             <form action="<?= route('login') ?>" method="post">
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" name="email" id="email" class="form-control" required>
+                <input type="email" name="email" id="email" class="form-control" placeholder="johndoe@example.com" required>
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" name="password" id="password" class="form-control" required>
+                <input type="password" name="password" id="password" class="form-control" placeholder="*********" required>
               </div>
               <button type="submit" class="btn btn-primary">Login</button>
             </form>

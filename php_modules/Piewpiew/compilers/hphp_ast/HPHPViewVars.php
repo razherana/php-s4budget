@@ -78,6 +78,7 @@ class HPHPViewVars extends ViewVars
 
     // We make this a random long name so it has low probability it collides with the var_name there
     $__content__content__content__content__content__content__ = $this->elements[HPHPTemplate::class][$template_name]->content;
+    $___vars___ = $this;
 
     // We extract the vars
     extract($this->elements[HPHPTemplate::class][$template_name]->uses);

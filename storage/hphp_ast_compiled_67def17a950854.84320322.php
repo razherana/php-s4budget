@@ -4,13 +4,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title><?= $title ?? 'Dashboard' ?></title>
 
   <!-- Links to default libs -->
   <link rel="stylesheet" href="<?= route('assets/bs5.3/css/bootstrap.min.css') ?>">
   <link rel="stylesheet" href="<?= route('assets/fa/css/all.min.css') ?>">
+  <link rel="stylesheet" href="<?= route('assets/poppins/poppins.css') ?>">
   <link rel="stylesheet" href="<?= route('assets/page/css/default.css') ?>">
 
+  <style>
+    .dropdown-menu-left {
+      left: -9em !important;
+      top: 2.5em !important;
+    }
+
+    .dropdown-menu-left-2 {
+      left: unset !important;
+      right: 1em;
+      top: 4.3em !important;
+    }
+
+    .container-title {
+      font-family: 'poppins';
+      font-weight: 600;
+    }
+  </style>
+
+  <?php $___vars___->use('head'); ?>
 </head>
 
 <body>
@@ -20,14 +40,31 @@
   <!--# Navbar -->
   <nav
     class="navbar navbar-expand-lg navbar-light p-4">
-    <a class="navbar-brand" href="#">Budget</a>
+    <a class="navbar-brand" href="<?= route() ?>">Budget</a>
     <div class="d-flex gap-4 ms-auto">
-      <a href="#" class="navicons">
-        <span class="visually-hidden">
-          Add ...
-        </span>
-        <i class="fa-plus-circle fas"></i>
-      </a>
+
+      <?php if(auth()->get()->is_super_admin == 1): ?>
+        <a href="#" class="navicons" id="adminProfileDown" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="visually-hidden">
+            Add ...
+          </span>
+          <i class="fa-plus-circle fas"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-left-2" aria-labelledby="adminProfileDown">
+          <li>
+            <a class="dropdown-item" href="<?= route('departements/create') ?>">
+              <i class="fa fa-briefcase"></i>
+              New Departement...
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="<?= route('users/manage') ?>">
+              <i class="fa fa-user"></i>
+              Manage Users...
+            </a>
+          </li>
+        </ul>
+      <?php endif; ?>
 
       <a href="#" class="navicons">
         <span class="visually-hidden">
@@ -36,18 +73,37 @@
         <i class="fa fa-bell"></i>
       </a>
 
-      <a href="#" class="navicons">
-        <span class="visually-hidden">
-          Profile
-        </span>
-        <i class="fa fa-user"></i>
-      </a>
+      <div class="dropdown">
+        <a href="#" class="navicons" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="visually-hidden">
+            Profile
+          </span>
+          <i class="fa fa-user"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-left" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="#">Profile</a></li>
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="fa fa-cog"></i>
+              Settings
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="<?= route('logout') ?>">
+              <i class="fa fa-sign-out-alt"></i>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+
+
     </div>
   </nav>
 
   <!-- Container -->
-
   <div id="container">
+
     <!--# Sidebar -->
 
     <div class="sidebar">
@@ -56,7 +112,6 @@
       </div>
 
       <div class="icons-container">
-
         <?php foreach($departements as $dept_url => $dept_infos): ?>
           <a href="<?= $dept_url ?>">
             <i class="<?= $dept_infos[1] ?> icons" tabindex="1" data-tooltip data-bs-placement="right" title="<?= $dept_infos[0] ?>">
@@ -67,20 +122,90 @@
           </a>
         <?php endforeach; ?>
 
+        <?php if(auth()->get()->is_super_admin == 1): ?>
+          <a href="#" id="createDept" data-bs-toggle="modal" data-bs-target="#createDeptModal">
+            <i class="fa fa-plus icons" tabindex="1" data-tooltip data-bs-placement="right" title="Create Departement">
+              <span class="visually-hidden">
+                Create Departement
+              </span>
+            </i>
+          </a>
+        <?php endif; ?>
       </div>
     </div>
 
     <!--# Content  -->
     <div id="content">
 
+      <?php $___vars___->include_block('components/errorsuccess', ); ?>
+
       <div class="d-flex justify-content-between">
-        <h2>Bienvenue, <?= auth()->get()->name ?></h2>
-        <button class="btn btn-primary rounded-pill">Add new <i class="fa fa-plus"></i></button>
+        <h2 class="container-title">
+          <?=
+          $containertitle ?? "Bienvenue, " . auth()->get()->name
+          ?>
+        </h2>
+        <?php $___vars___->use('moreHeaders'); ?>
       </div>
+
+      <?php $___vars___->use('content'); ?>
 
     </div>
   </div>
 
+  <!-- Modals -->
+
+  <?php if(auth()->get()->is_super_admin == 1): ?>
+    <!--# Create Departement Modal -->
+
+    <div class="modal fade" id="createDeptModal" tabindex="-1" aria-labelledby="createDeptModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createDeptModalLabel">Create Departement</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="<?= route('departements/create') ?>" method="post">
+              <div class="mb-3">
+                <label for="name" class="form-label">Nom du Departement</label>
+                <input type="text" class="form-control" id="name" name="name" required placeholder="Finance, ...">
+              </div>
+
+              <div class="mb-3">
+                <label for="icon" class="form-label">Icon</label>
+                <select
+                  class="form-select"
+                  name="icon"
+                  id="icon">
+                  <option selected>-- Select one or write in the input below --</option>
+                  <option value="fa fa-briefcase">Briefcase</option>
+                  <option value="fa fa-money-bill">Money Bill</option>
+                  <option value="fa fa-chart-line">Chart Line</option>
+                  <option value="fa fa-chart-pie">Chart Pie</option>
+                  <option value="fa fa-chart-bar">Chart Bar</option>
+                  <option value="fa fa-chart-area">Chart Area</option>
+                  <option value="fa fa-balance-scale">Balance Scale</option>
+                  <option value="fa fa-balance-scale-right">Balance Scale Right</option>
+                  <option value="fa fa-balance-scale-left">Balance Scale Left</option>
+                  <option value="fa fa-user-tie">User Tie</option>
+                  <option value="fa fa-user-secret">User Secret</option>
+                  <option value="fa fa-user-shield">User Shield</option>
+                </select>
+              </div>
+
+              <div class="mb-4">
+                <label for="icon-custom" class="form-label">Icon (Custom), leave empty if not needed...</label>
+                <input type="text" class="form-control" id="icon-custom" name="icon-custom" placeholder="fa fa-icon">
+              </div>
+
+              <button type="submit" class="btn btn-outline-primary">Creer un Departement</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  <?php endif; ?>
 
 
 

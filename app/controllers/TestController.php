@@ -33,4 +33,9 @@ class TestController
   {
     piewpiew('pages.login');
   }
+
+  public function innerTable()
+  {
+    piewpiew('tests.division');
+  }
 }

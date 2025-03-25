@@ -12,7 +12,7 @@ return [
    * name_of_auth => [config_of_auth]
    */
   "auths" => [
-    "user" => [User::class, 'email', 'password', null, fn($a, $b) => $a == $b],
+    "user" => [User::class, 'email', 'password', fn($a) => $a, fn($a, $b) => $a == $b],
     // "name_of_auth" => [Model::class, 'id_column'|['id_column1', 'id_column2', ...], 'pass_column', ?\Closure hash_method, ?\Closure password_verify, ?\Closure id_relation],
   ],
 

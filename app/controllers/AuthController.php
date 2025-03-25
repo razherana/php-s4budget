@@ -45,4 +45,11 @@ class AuthController
       $this->app->redirect('/login');
     }
   }
+
+  public function logout()
+  {
+    auth()->logout();
+    sezzion()->tempset('success', 'You have been logged out');
+    $this->app->redirect('/login');
+  }
 }

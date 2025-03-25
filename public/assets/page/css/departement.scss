@@ -1,0 +1,204 @@
+@import "variables";
+
+#content {
+  .ncontainer {
+    width: $default-w;
+    min-height: $default-h;
+    border-radius: $default-radius;
+    margin: 1em 0;
+    padding: 1.5em 1em;
+    border: solid 1px $border-color;
+  }
+
+  .ncontainer-table {
+    @extend .ncontainer;
+
+    .search-bar {
+      position: relative;
+
+      .search-input {
+        outline: none;
+        background-color: $border-color-shade-1;
+        border: transparent 1px solid;
+        padding: 10px;
+        padding-left: 39px;
+      }
+
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 35px;
+        color: $border-color-darker-1;
+      }
+    }
+
+    .ntable {
+      tr.spacer {
+        td {
+          column-span: all;
+          padding: 0 !important;
+          border: none;
+        }
+      }
+
+      td,
+      th {
+        padding: $table-padding;
+      }
+
+      thead tr {
+        th {
+          text-transform: uppercase;
+          color: $border-color-darker-1;
+          font-family: "helvetica", "arial";
+          font-weight: 600;
+          background-color: $border-color-shade-2;
+          text-align: center;
+          border-right: solid 1px $border-color-darker-1;
+
+          &:first-child {
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
+          }
+
+          &:last-child {
+            border-top-right-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+            border-right: none;
+          }
+        }
+      }
+
+      tr.categorie {
+        > td {
+          text-align: center;
+          background-color: $border-color;
+          cursor: pointer;
+          font-family: "Poppins", "Arial";
+          font-weight: bold;
+          transition: 0.15s;
+          border-radius: 1em;
+          border: none;
+          user-select: none;
+
+          .arrow {
+            transition: all 0.15s;
+          }
+
+          &:is([data-toggle="1"], :hover) {
+            background-color: $border-color-darker-1;
+            letter-spacing: 1px;
+          }
+
+          &[data-toggle="1"] {
+            .arrow {
+              rotate: 0.5turn;
+            }
+          }
+        }
+      }
+
+      tr.addnew {
+        @extend .categorie;
+        background-color: transparent;
+
+        td {
+          background-color: $prim-color-slight-shade;
+
+          &:hover {
+            background-color: $prim-color-shade-1;
+            letter-spacing: 2px;
+          }
+        }
+      }
+
+      thead tr th:first-child {
+        margin-bottom: 1em;
+      }
+
+      tr.categorie-data {
+        display: none;
+
+        @keyframes showElement {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        &.show {
+          display: table-row !important;
+          animation: showElement 0.5s ease-in-out forwards;
+        }
+
+        > td {
+          border-bottom: none;
+        }
+
+        .ntable-inner-1 {
+          width: 100%;
+          border-left: solid 1px $border-color-darker-1;
+          @extend .ntable;
+        }
+      }
+    }
+
+    tbody tr {
+      td {
+        padding-top: 1em !important;
+        padding-bottom: 1em !important;
+        border-bottom: solid 1px $border-color-shade-1;
+      }
+    }
+  }
+
+  .ncontainer.budget {
+    height: fit-content;
+
+    .announcer {
+      color: $border-color-darker-1;
+    }
+
+    .input-budget {
+      border: none;
+      outline: none;
+      border-bottom: solid 1px $border-color-shade-1;
+      transition: all 0.15s;
+
+      &:focus {
+        border-bottom-color: $border-color-darker-1;
+      }
+    }
+  }
+}
+
+// Forms
+
+#addCategorieForm,
+#addTypeForm,
+#addPrevisionForm {
+  width: 100vw;
+  height: 100vh;
+  background-color: #00000026;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.close {
+  font-size: 30px;
+  transition: 0.15s;
+  user-select: none;
+  cursor: pointer;
+
+  &:hover {
+    color: red;
+  }
+}

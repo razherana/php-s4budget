@@ -16,6 +16,12 @@ class Departement extends BaseModel
    */
   public $columns = [
     'id',
-    'name'
+    'name',
+    'icon'
   ];
+
+  public function categories()
+  {
+    return $this->hasMany(Categorie::class, fn($d, $c) => $d->id == $c->id_departement, 'categories');
+  }
 }

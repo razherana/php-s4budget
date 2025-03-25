@@ -11,6 +11,8 @@ use Tracy\Debugger;
  * @var Engine $app
  */
 
+require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'functions.php';
+
 session_start();
 
 // uncomment the following line for MySQL
@@ -27,10 +29,10 @@ require_once __DIR__ . "{$ds}..{$ds}..{$ds}php_modules{$ds}modules.php";
 $pdoClass = Debugger::$showBar === true ? PdoQueryCapture::class : PdoWrapper::class;
 $app->register('db', $pdoClass, [$dsn, $config['database']['user'] ?? null, $config['database']['password'] ?? null]);
 
-Flight::map('notFound', function() {
-	echo '<h1>404 Not Found</h1>';
-	echo '<h3>The page you have requested could not be found.</h3>';
-	Flight::halt(404);
+Flight::map('notFound', function () {
+  echo '<h1>404 Not Found</h1>';
+  echo '<h3>The page you have requested could not be found.</h3>';
+  Flight::halt(404);
 });
 
 Lorm::set_pdo($app->db());

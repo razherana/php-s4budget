@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<?php extract(Piewpiew\view\View::$view_vars['pages/dashboard']->get_data()); ?><!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -30,7 +30,7 @@
     }
   </style>
 
-  <use head />
+  <?php $___vars___->use('head'); ?>
 </head>
 
 <body>
@@ -43,7 +43,7 @@
     <a class="navbar-brand" href="<?= route() ?>">Budget</a>
     <div class="d-flex gap-4 ms-auto">
 
-      <if condition="auth()->get()->is_super_admin == 1">
+      <?php if(auth()->get()->is_super_admin == 1): ?>
         <a href="#" class="navicons" id="adminProfileDown" data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">
             Add ...
@@ -64,7 +64,7 @@
             </a>
           </li>
         </ul>
-      </if>
+      <?php endif; ?>
 
       <a href="#" class="navicons">
         <span class="visually-hidden">
@@ -112,7 +112,7 @@
       </div>
 
       <div class="icons-container">
-        <foreach loop="$departements as $dept_url => $dept_infos">
+        <?php foreach($departements as $dept_url => $dept_infos): ?>
           <a href="<?= $dept_url ?>">
             <i class="<?= $dept_infos[1] ?> icons" tabindex="1" data-tooltip data-bs-placement="right" title="<?= $dept_infos[0] ?>">
               <span class="visually-hidden">
@@ -120,9 +120,9 @@
               </span>
             </i>
           </a>
-        </foreach>
+        <?php endforeach; ?>
 
-        <if condition="auth()->get()->is_super_admin == 1">
+        <?php if(auth()->get()->is_super_admin == 1): ?>
           <a href="#" id="createDept" data-bs-toggle="modal" data-bs-target="#createDeptModal">
             <i class="fa fa-plus icons" tabindex="1" data-tooltip data-bs-placement="right" title="Create Departement">
               <span class="visually-hidden">
@@ -130,14 +130,14 @@
               </span>
             </i>
           </a>
-        </if>
+        <?php endif; ?>
       </div>
     </div>
 
     <!--# Content  -->
     <div id="content">
 
-      <include components.errorsuccess />
+      <?php $___vars___->include_block('components/errorsuccess', ); ?>
 
       <div class="d-flex justify-content-between">
         <h2 class="container-title">
@@ -145,17 +145,17 @@
           $containertitle ?? "Bienvenue, " . auth()->get()->name
           ?>
         </h2>
-        <use moreHeaders />
+        <?php $___vars___->use('moreHeaders'); ?>
       </div>
 
-      <use content />
+      <?php $___vars___->use('content'); ?>
 
     </div>
   </div>
 
   <!-- Modals -->
 
-  <if condition="auth()->get()->is_super_admin == 1">
+  <?php if(auth()->get()->is_super_admin == 1): ?>
     <!--# Create Departement Modal -->
 
     <div class="modal fade" id="createDeptModal" tabindex="-1" aria-labelledby="createDeptModalLabel" aria-hidden="true">
@@ -205,7 +205,7 @@
         </div>
       </div>
     </div>
-  </if>
+  <?php endif; ?>
 
 
 
