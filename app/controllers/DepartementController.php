@@ -270,7 +270,7 @@ class DepartementController
     $pdf->AddPage();
     $pdf->TitleDetails();
     $pdf->CreateTables();
-    $pdf->Output('', 'rapport.pdf');
+    $pdf->Output('D', 'rapport.pdf');
   }
 
   public function create()
