@@ -24,4 +24,8 @@ class Categorie extends BaseModel
   {
     return $this->belongsTo(Departement::class, fn($c, $d) => $c->id_departement == $d->id, 'departement');
   }
+
+  public function types() {
+    return $this->hasMany(Type::class, fn($c, $t) => $c->id == $t->id_categorie, 'types');
+  }
 }

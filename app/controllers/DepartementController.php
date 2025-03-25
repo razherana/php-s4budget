@@ -182,20 +182,94 @@ class DepartementController
 
     if ($hasBudget) {
       $budgetFinal = $budget->solde;
+      $budgetFinal = Budget::applyBeforeDate($budgetFinal, Prevision::doquery()->where('YEAR(date)', '<', $annee)->get(), $departement, $annee);
+      $ogBudget = $budgetFinal;
 
       foreach ($categories as $categorie)
         foreach ($categorie['types'] as $type) {
-          $budgetFinal -= array_sum($type['previsions']['totalPrevision1']);
-          $budgetFinal += array_sum($type['previsions']['totalPrevision2']);
+          $budgetFinal -= array_sum($type['previsions']['totalRealisation1']);
+          $budgetFinal += array_sum($type['previsions']['totalRealisation2']);
         }
 
-      $budget = $budget->solde . " Ar";
+      $budget = $ogBudget . " Ar";
       $budgetFinal = $budgetFinal . " Ar";
     }
 
     $closedBudget = (bool) $budgetModel->locked;
 
     piewpiew('pages.departement.departement', compact('annee', 'departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal', 'closedBudget', 'budgetModel', 'mois'));
+  }
+
+  public function toPdf($id)
+  {
+    $departement = Departement::find($id);
+    $annee = $this->app->request()->query->annee ?? date('Y');
+
+    if (!$departement) {
+      sezzion()->tempset('error', 'Departement not found');
+      $this->app->redirect('/');
+      return;
+    }
+
+    if (auth()->get()->is_super_admin != 1 && auth()->get()->id_departement != $id) {
+      sezzion()->tempset('error', 'Vous manquez d\'autorisation');
+      $this->app->redirect('/login');
+      return;
+    }
+
+    ['mois' => $mois, 'categories' => $categories] = $this->normalizedCategorieData($departement, $annee);
+    sort($mois);
+
+    $budget = Budget::getCurrent($id);
+
+    if ($budget == 'Pas de Budget') {
+      sezzion()->tempset('error', 'Pas de budget pour ce departement');
+      $this->app->redirect('/departements/' . $id . '?annee=' . $annee);
+      return;
+    }
+
+    $budgetFinal = $budget->solde;
+    $budgetFinal = Budget::applyBeforeDate($budgetFinal, Prevision::doquery()->where('YEAR(date)', '<', $annee)->get(), $departement, $annee);
+    $ogBudget = $budgetFinal;
+
+    $resultatParMois = [];
+
+    $budgetInitialMois = $ogBudget;
+
+    foreach ($mois as $mois_) {
+      $totalPrevision1 = 0;
+      $totalPrevision2 = 0;
+      $totalRealisation1 = 0;
+      $totalRealisation2 = 0;
+
+      foreach ($categories as $categorie)
+        foreach ($categorie['types'] as $type) {
+          $totalPrevision1 += $type['previsions']['totalPrevision1'][$mois_];
+          $totalPrevision2 += $type['previsions']['totalPrevision2'][$mois_];
+          $totalRealisation1 += $type['previsions']['totalRealisation1'][$mois_];
+          $totalRealisation2 += $type['previsions']['totalRealisation2'][$mois_];
+        }
+
+      $resultatParMois[$mois_] = [
+        'totalPrevision1' => $totalPrevision1,
+        'totalPrevision2' => $totalPrevision2,
+        'totalRealisation1' => $totalRealisation1,
+        'totalRealisation2' => $totalRealisation2,
+        'totalEcart1' => $totalPrevision1 - $totalRealisation1,
+        'totalEcart2' => $totalRealisation2 - $totalPrevision2,
+        'totalEcart' => ($totalRealisation2 - $totalPrevision2) - ($totalPrevision1 - $totalRealisation1),
+        'totalPrevision' => $totalPrevision2 - $totalPrevision1,
+        'totalRealisation' => $totalRealisation2 - $totalRealisation1,
+        'budgetInitial' => $budgetInitialMois,
+        'budgetFinal' => $budgetInitialMois += $totalRealisation2 - $totalRealisation1
+      ];
+    }
+
+    piewpiew('tests.resultat-pdf', compact('resultatParMois', 'departement', 'annee') + [
+      'budgetInitial' => $ogBudget,
+      'budgetFinal' => $budgetFinal,
+      'mois' => $mois
+    ]);
   }
 
   public function create()

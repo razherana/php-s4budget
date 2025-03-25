@@ -22,7 +22,7 @@ use flight\net\Router;
 
 // for testing purposes
 $tests = new TestController($app);
-$router->get('/test', [$tests, 'innerTable']);
+$router->get('/test/@id', [new DepartementController($app), 'toPdf']);
 
 // Logins
 $authController = new AuthController($app);
