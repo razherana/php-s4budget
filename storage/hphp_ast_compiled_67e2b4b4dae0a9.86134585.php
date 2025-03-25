@@ -223,7 +223,7 @@
 <?php if(!empty($mois)): ?>
   <?php foreach($mois as $mois_): ?>
     <div class="ncontainer-table" style="height: fit-content !important; overflow-y: auto" id="toPDF">
-      <h1 class="mb-3"><?= formatMois($mois_) ?> <?= $annee ?></h1>
+      <h1 class="mb-3 text-center"><?= formatMois($mois_) ?> <?= $annee ?></h1>
       <div
         class="table-responsive-md px-3">
         <table class="ntable w-100">

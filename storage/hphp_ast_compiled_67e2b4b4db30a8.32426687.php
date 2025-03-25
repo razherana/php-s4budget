@@ -243,7 +243,7 @@
     var icons = document.querySelectorAll('.icons');
 
     icons.forEach(icon => {
-      if (icon.parentElement.href == current_url)
+      if (String(current_url).startsWith(icon.parentElement.href))
         icon.classList.add('active');
       else
         icon.classList.remove('active');

@@ -52,11 +52,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  document
-    .getElementById("addCategorie")
-    .addEventListener("click", function () {
-      document.getElementById("addCategorieForm").classList.toggle("hidden");
-    });
+  (
+    document.getElementById("addCategorie") ?? { addEventListener: () => {} }
+  ).addEventListener("click", function () {
+    document.getElementById("addCategorieForm").classList.toggle("hidden");
+  });
 
   document.querySelectorAll("[data-addType]").forEach((element) => {
     element.addEventListener("click", function () {
@@ -73,4 +73,39 @@ document.addEventListener("DOMContentLoaded", function () {
         this.getAttribute("data-type-id");
     });
   });
+
+  const container = document.getElementById("content");
+
+  // Restore scroll position
+  try {
+    const scrollData =
+      JSON.parse(localStorage.getItem("containerScroll")) || {};
+    if (annee && scrollData[annee]) {
+      requestAnimationFrame(() => {
+        container.scrollTop = parseInt(scrollData[annee]);
+      });
+    }
+  } catch (err) {
+    console.error("Error restoring scroll position:", err);
+    localStorage.removeItem("containerScroll");
+  }
+
+  // Save scroll position
+  if (annee) {
+    // Use debouncing to avoid excessive writes to localStorage
+    let scrollTimeout;
+    container.addEventListener("scroll", () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        try {
+          const scrollData =
+            JSON.parse(localStorage.getItem("containerScroll")) || {};
+          scrollData[annee] = container.scrollTop;
+          localStorage.setItem("containerScroll", JSON.stringify(scrollData));
+        } catch (e) {
+          console.error("Error saving scroll position:", e);
+        }
+      }, 200); // Adjust debounce time as needed (200ms is good for most cases)
+    });
+  }
 });

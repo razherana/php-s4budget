@@ -6,7 +6,7 @@
 <?php $___vars___->end_block(); ?>
 
 <?php $___vars___->start_block("moreHeaders"); ?>
-  <button class="btn btn-outline-primary rounded-pill" onclick="generatePDF()">Export PDF <i class="fas fa-file-export"></i></button>
+  <button class="btn btn-outline-primary rounded-pill">Export PDF <i class="fas fa-file-export"></i></button>
 <?php $___vars___->end_block(); ?>
 
 <?php $___vars___->start_block("content"); ?>
@@ -199,47 +199,4 @@
 
   <script src="<?= route('assets/html2pdf/html2pdf.min.js') ?>"></script>
   <script src="<?= route('assets/jsPDF/jspdf.umd.min.js') ?>"></script>
-
-  <script>
-    const {
-      jsPDF
-    } = window.jspdf;
-
-    function generatePDF() {
-      const element = document.getElementById('toPDF');
-
-      html2canvas(element, {
-        scale: 2, // Higher quality
-        logging: true, // Helpful for debugging
-        useCORS: true // For external images
-      }).then(canvas => {
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const imgData = canvas.toDataURL('image/png');
-
-        // Calculate dimensions to fit PDF page
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const ratio = canvas.width / canvas.height;
-        let imgWidth = pageWidth;
-        let imgHeight = imgWidth / ratio;
-
-        // If content is taller than page, adjust
-        if (imgHeight > pageHeight) {
-          imgHeight = pageHeight;
-          imgWidth = imgHeight * ratio;
-        }
-
-        doc.addImage(imgData, 'PNG',
-          (pageWidth - imgWidth) / 2, // Center horizontally
-          (pageHeight - imgHeight) / 2, // Center vertically
-          imgWidth,
-          imgHeight
-        );
-
-        doc.save('document.pdf');
-      }).catch(err => {
-        console.error('Error generating PDF:', err);
-      });
-    }
-  </script>
 <?php $___vars___->end_block(); ?><?php $___vars___->use_join(); ?>
