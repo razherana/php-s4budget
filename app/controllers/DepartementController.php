@@ -9,6 +9,7 @@ use app\models\Categorie;
 use app\models\Departement;
 use app\models\Prevision;
 use app\models\Type;
+use DateTime;
 use flight\Engine;
 
 class DepartementController
@@ -27,8 +28,13 @@ class DepartementController
   /**
    * @param Departement $departement
    */
-  private function normalizedCategorieData($departement)
+  private function normalizedCategorieData($departement, $annee)
   {
+    if ($annee === null)
+      return ['mois' => [], 'categories' => []];
+
+    $mois = [];
+
     /** @var Categorie[] $categories */
     $categories = $departement->categories;
     $types = Type::all();
@@ -54,10 +60,10 @@ class DepartementController
         'previsions' => [
           'previsions1' => [],
           'previsions2' => [],
-          'totalPrevision1' => 0,
-          'totalPrevision2' => 0,
-          'totalRealisation1' => 0,
-          'totalRealisation2' => 0
+          'totalPrevision1' => [],
+          'totalPrevision2' => [],
+          'totalRealisation1' => [],
+          'totalRealisation2' => []
         ]
       ];
     }
@@ -69,7 +75,7 @@ class DepartementController
     $totalRealisation1s = [];
     $totalRealisation2s = [];
 
-    foreach (Prevision::all() as $prevision) {
+    foreach (array_filter(Prevision::all(), fn($e) => (new DateTime($e->date))->format('Y') == $annee) as $prevision) {
       if (empty($result_types[$prevision->id_type]))
         continue;
 
@@ -80,47 +86,72 @@ class DepartementController
         'designation' => $prevision->designation,
         'date' => $prevision->date,
         'type' => $prevision->type,
-        'id_type' => $prevision->id_type
+        'id_type' => $prevision->id_type,
+        'locked' => $prevision->locked
       ];
 
-      $totalPrevision1s[$prevision->id_type] = $totalPrevision1s[$prevision->id_type] ?? 0;
-      $totalRealisation1s[$prevision->id_type] = $totalRealisation1s[$prevision->id_type] ?? 0;
-      $totalPrevision2s[$prevision->id_type] = $totalPrevision2s[$prevision->id_type] ?? 0;
-      $totalRealisation2s[$prevision->id_type] = $totalRealisation2s[$prevision->id_type] ?? 0;
+      $id_type = intval($prevision->id_type);
+      $mois_ = intval((new DateTime($prevision->date))->format('m'));
+
+      $totalPrevision1s[$id_type] = $totalPrevision1s[$id_type] ?? [];
+      $totalRealisation1s[$id_type] = $totalRealisation1s[$id_type] ?? [];
+      $totalPrevision2s[$id_type] = $totalPrevision2s[$id_type] ?? [];
+      $totalRealisation2s[$id_type] = $totalRealisation2s[$id_type] ?? [];
+
+      $mois[$mois_] = $mois_;
+
+      if (!isset($totalPrevision1s[$id_type][$mois_]))
+        $totalPrevision1s[$id_type][$mois_] = 0;
+
+      if (!isset($totalRealisation1s[$id_type][$mois_]))
+        $totalRealisation1s[$id_type][$mois_] = 0;
+
+      if (!isset($totalPrevision2s[$id_type][$mois_]))
+        $totalPrevision2s[$id_type][$mois_] = 0;
+
+      if (!isset($totalRealisation2s[$id_type][$mois_]))
+        $totalRealisation2s[$id_type][$mois_] = 0;
+
+      if (!$prevision->locked)
+        continue;
 
       if ($prevision->type == 0) {
-        $totalPrevision1s[$prevision->id_type] += $prevision->prevision;
-        $totalRealisation1s[$prevision->id_type] += $prevision->realisation;
+        $totalPrevision1s[$id_type][$mois_] += $prevision->prevision;
+        $totalRealisation1s[$id_type][$mois_] += $prevision->realisation;
       } else {
-        $totalPrevision2s[$prevision->id_type] += $prevision->prevision;
-        $totalRealisation2s[$prevision->id_type] += $prevision->realisation;
+        $totalPrevision2s[$id_type][$mois_] += $prevision->prevision;
+        $totalRealisation2s[$id_type][$mois_] += $prevision->realisation;
       }
     }
 
     // Combine
     foreach ($result_previsions as $v) {
       $type = $v['type'];
-      if ($type == 0)
-        $result_types[$v['id_type']]['previsions']['previsions1'][] = $v;
-      else
-        $result_types[$v['id_type']]['previsions']['previsions2'][] = $v;
+      $m = intval((new DateTime($v['date']))->format('m'));
+
+      $result_types[$v['id_type']]['previsions']['previsions1'][$m] = $result_types[$v['id_type']]['previsions']['previsions1'][$m] ?? [];
+      $result_types[$v['id_type']]['previsions']['previsions2'][$m] = $result_types[$v['id_type']]['previsions']['previsions2'][$m] ?? [];
+
+      $result_types[$v['id_type']]['previsions'][$type == 0 ? 'previsions1' : 'previsions2'][$m][] = $v;
     }
 
     foreach ($result_types as $v) {
-      $v['previsions']['totalPrevision1'] = $totalPrevision1s[$v['id']] ?? 0;
-      $v['previsions']['totalPrevision2'] = $totalPrevision2s[$v['id']] ?? 0;
-      $v['previsions']['totalRealisation1'] = $totalRealisation1s[$v['id']] ?? 0;
-      $v['previsions']['totalRealisation2'] = $totalRealisation2s[$v['id']] ?? 0;
+      $v['previsions']['totalPrevision1'] = $totalPrevision1s[$v['id']] ?? [];
+      $v['previsions']['totalPrevision2'] = $totalPrevision2s[$v['id']] ?? [];
+      $v['previsions']['totalRealisation1'] = $totalRealisation1s[$v['id']] ?? [];
+      $v['previsions']['totalRealisation2'] = $totalRealisation2s[$v['id']] ?? [];
 
       $result[$v['id_categorie']]['types'][] = $v;
     }
 
-    return $result;
+    return ['mois' => array_values($mois), 'categories' => $result];
   }
 
   public function show($id)
   {
     $departement = Departement::find($id);
+
+    $annee = $_GET['annee'] ?? null;
 
     if (!$departement) {
       sezzion()->tempset('error', 'Departement not found');
@@ -143,7 +174,9 @@ class DepartementController
 
     $departements = IndexController::mapDepartementModels($departementModels);
 
-    $categories = $this->normalizedCategorieData($departement);
+    ['mois' => $mois, 'categories' => $categories] = $this->normalizedCategorieData($departement, $annee);
+
+    sort($mois);
 
     $budgetFinal = "Pas de Budget Initial";
 
@@ -152,8 +185,8 @@ class DepartementController
 
       foreach ($categories as $categorie)
         foreach ($categorie['types'] as $type) {
-          $budgetFinal -= $type['previsions']['totalPrevision1'];
-          $budgetFinal += $type['previsions']['totalPrevision2'];
+          $budgetFinal -= array_sum($type['previsions']['totalPrevision1']);
+          $budgetFinal += array_sum($type['previsions']['totalPrevision2']);
         }
 
       $budget = $budget->solde . " Ar";
@@ -162,7 +195,7 @@ class DepartementController
 
     $closedBudget = (bool) $budgetModel->locked;
 
-    piewpiew('pages.departement.departement', compact('departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal', 'closedBudget', 'budgetModel'));
+    piewpiew('pages.departement.departement', compact('annee', 'departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal', 'closedBudget', 'budgetModel', 'mois'));
   }
 
   public function create()

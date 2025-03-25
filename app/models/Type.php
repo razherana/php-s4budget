@@ -19,4 +19,9 @@ class Type extends BaseModel
     'designation',
     'id_categorie'
   ];
+
+  public function categorie()
+  {
+    return $this->belongsTo(Categorie::class, fn($t, $c) => $t->id_categorie == $c->id, 'categorie');
+  }
 }

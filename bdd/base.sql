@@ -49,6 +49,7 @@ CREATE TABLE Prevision (
     type INT(1), -- DEPENSE OU RECETTE
     id_type INT,
     `date` DATE DEFAULT CURRENT_DATE,
+    `locked` INT(1) DEFAULT 0,
     FOREIGN KEY (id_type) REFERENCES Type (id)
 );
 

@@ -59,7 +59,9 @@ class BudgetController
       sezzion()->tempset('error', 'Failed to update budget');
     }
 
-    $this->app->redirect('/departements/' . $id_departement);
+    $annee = isset($_GET['annee']) ? ('?annee=' . $_GET['annee']) : '';
+
+    $this->app->redirect('/departements/' . $id_departement . $annee);
   }
 
   public function toggleLock($id)
@@ -82,6 +84,7 @@ class BudgetController
       sezzion()->tempset('error', 'Failed to update budget');
     }
 
-    $this->app->redirect('/departements/' . $budget->id_departement);
+    $annee = isset($_GET['annee']) ? ('?annee=' . $_GET['annee']) : '';
+    $this->app->redirect('/departements/' . $budget->id_departement . $annee);
   }
 }

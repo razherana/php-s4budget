@@ -46,6 +46,8 @@ class CategorieController
     } else {
       sezzion()->tempset('error', 'Veuillez reessayer...');
     }
-    $this->app->redirect('/departements/' . $id_departement);
+
+    $annee = isset($_GET['annee']) ? ('?annee=' . $_GET['annee']) : '';
+    $this->app->redirect('/departements/' . $id_departement . $annee);
   }
 }

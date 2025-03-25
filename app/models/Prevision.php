@@ -21,6 +21,12 @@ class Prevision extends BaseModel
     'prevision',
     'type',
     'id_type',
-    'date'
+    'date',
+    'locked',
   ];
+
+  public function typeModel()
+  {
+    return $this->belongsTo(Type::class, fn($p, $t) => $p->id_type == $t->id, 'typeModel');
+  }
 }

@@ -13,6 +13,11 @@
   .ncontainer-table {
     @extend .ncontainer;
 
+    .search-label {
+      color: $border-color-darker-2;
+      font-family: "Poppins", "Arial";
+    }
+
     .search-bar {
       position: relative;
 

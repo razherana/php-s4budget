@@ -69,4 +69,7 @@ $router->group('', function () use ($app, $router) {
 
   $budgetController = new BudgetController($app);
   $router->get('/budgets/@id/lock', [$budgetController, 'toggleLock']);
+
+  $previsionController = new PrevisionController($app);
+  $router->get('/previsions/@id/lock', [$previsionController, 'toggleLock']);
 }, [new SuperAdminMiddleware]);

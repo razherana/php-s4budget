@@ -40,7 +40,12 @@
   <!--# Navbar -->
   <nav
     class="navbar navbar-expand-lg navbar-light p-4">
-    <a class="navbar-brand" href="<?= route() ?>">Budget</a>
+    <a class="navbar-brand me-auto" href="<?= route() ?>">Budget</a>
+
+    <?php if(auth()->get()->is_super_admin == 1): ?>
+      <h1 class="mx-auto text-center">Finance 🤑👀</h1>
+    <?php endif; ?>
+
     <div class="d-flex gap-4 ms-auto">
 
       <?php if(auth()->get()->is_super_admin == 1): ?>

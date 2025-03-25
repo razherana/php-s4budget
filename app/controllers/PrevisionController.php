@@ -49,6 +49,31 @@ class PrevisionController
       sezzion()->tempset('error', 'Erreur lors de l\'ajout de la prévision');
     }
 
-    $this->app->redirect('/departements/' . Categorie::find(Type::find($id_type)->id_categorie)->id_departement);
+    $annee = isset($_GET['annee']) ? ('?annee=' . $_GET['annee']) : '';
+    $this->app->redirect('/departements/' . Categorie::find(Type::find($id_type)->id_categorie)->id_departement . $annee);
+  }
+
+  public function toggleLock($id)
+  {
+    $prevision = Prevision::find($id);
+
+    if ($prevision == null) {
+      sezzion()->tempset('error', 'La prevision n\'existe pas');
+      $this->app->redirect('/');
+      return;
+    }
+
+    $prevision->locked = $prevision->locked ?? 0;
+    $prevision->locked = ($prevision->locked + 1) % 2;
+    $res = $prevision->update();
+
+    if ($res) {
+      sezzion()->tempset('success', 'Budget locked/unlocked');
+    } else {
+      sezzion()->tempset('error', 'Failed to update budget');
+    }
+
+    $annee = isset($_GET['annee']) ? ('?annee=' . $_GET['annee']) : '';
+    $this->app->redirect('/departements/' . $prevision->typeModel->categorie->id_departement . $annee);
   }
 }
