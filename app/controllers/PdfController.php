@@ -18,7 +18,7 @@ class PdfController
     {
         $this->app = $app;
     }
-require('fpdf.php');
+// require('fpdf.php');
 
 class PDF extends FPDF
 {
@@ -39,11 +39,10 @@ class PDF extends FPDF
         
         $colWidths = [50, 40, 40, 40];
 
-        // Titre du tableau (fusion des colonnes)
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(array_sum($colWidths), 10, 'Janvier 2025', 1, 1, 'C');
 
-        $this->SetFont('Arial', 'U', 10); // Texte souligné
+        $this->SetFont('Arial', 'U', 10); 
         $this->Cell($colWidths[0], 10, '', 1, 0, 'C'); // Cellule vide
         $this->Cell($colWidths[1], 10, 'Realisation', 1, 0, 'C');
         $this->Cell($colWidths[2], 10, 'Prevision', 1, 0, 'C');
@@ -74,7 +73,5 @@ $pdf = new PDF();
 $pdf->AddPage();
 $pdf->CreateTable();
 $pdf->Output('D', 'rapport.pdf'); // Téléchargement
-
-
 
 }
