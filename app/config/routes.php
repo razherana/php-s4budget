@@ -21,8 +21,8 @@ use flight\net\Router;
  */
 
 // for testing purposes
-$tests = new TestController($app);
-$router->get('/test/@id', [new DepartementController($app), 'toPdf']);
+// $tests = new TestController($app);
+// $router->get('/test/@id', [new DepartementController($app), 'toPdf']);
 
 // Logins
 $authController = new AuthController($app);
@@ -52,6 +52,8 @@ $router->group('', function () use ($app, $router) {
 
   $router->group('/departements/@id', function () use ($app, $router, $departementController) {
     $router->get('', [$departementController, 'show']);
+
+    $router->get('/exportpdf', [$departementController, 'toPdf']);
 
     $budgetController = new BudgetController($app);
     $router->post('/budget', [$budgetController, 'updateOrInsert']);

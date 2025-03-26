@@ -59,7 +59,7 @@ class PdfOutput extends FPDF
     $colWidths = [50, 40, 40, 40];
 
     $this->SetFont('Arial', 'B', 12);
-    $this->Cell(array_sum($colWidths), 10, formatMois($mois) . ' 2025', 1, 1, 'C');
+    $this->Cell(array_sum($colWidths), 10, formatMois($mois) . ' ' . $this->annee, 1, 1, 'C');
 
     $this->SetFont('Arial', 'U', 10);
     $this->Cell($colWidths[0], 10, '', 1, 0, 'C'); // Cellule vide

@@ -204,7 +204,7 @@ class DepartementController
   public function toPdf($id)
   {
     $departement = Departement::find($id);
-    $annee = $this->app->request()->query->annee ?? date('Y');
+    $annee = $_GET['annee'] ?? date('Y');
 
     if (!$departement) {
       sezzion()->tempset('error', 'Departement not found');
@@ -221,10 +221,19 @@ class DepartementController
     ['mois' => $mois, 'categories' => $categories] = $this->normalizedCategorieData($departement, $annee);
     sort($mois);
 
+    if (empty($mois)) {
+      sezzion()->tempset('error', 'Departement not found');
+      $this->app->redirect('/departements/' . $departement->id . '?annee=' . $annee);
+      return;
+    }
+
     $budget = Budget::getCurrent($id);
 
-    if ($budget == 'Pas de Budget') {
-      sezzion()->tempset('error', 'Pas de budget pour ce departement');
+    if ($budget == 'Pas de Budget' || !$budget->locked) {
+      if (!$budget->locked)
+        sezzion()->tempset('error', 'Budget en cours de validation');
+      else
+        sezzion()->tempset('error', 'Pas de budget pour ce departement');
       $this->app->redirect('/departements/' . $id . '?annee=' . $annee);
       return;
     }
@@ -270,7 +279,7 @@ class DepartementController
     $pdf->AddPage();
     $pdf->TitleDetails();
     $pdf->CreateTables();
-    $pdf->Output('D', 'rapport.pdf');
+    $pdf->Output('D', "rapport-{$annee}.pdf");
   }
 
   public function create()

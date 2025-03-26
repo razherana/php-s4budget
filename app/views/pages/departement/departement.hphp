@@ -3,10 +3,32 @@
 <block head>
   <link rel="stylesheet" href="<?= route('assets/page/css/departement.css') ?>">
   <script src="<?= route('assets/page/js/departement.js') ?>"></script>
+
+  <style>
+    .swiper {
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    .swiper-slide {
+      text-align: center;
+      font-size: 18px;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+
+  <link rel="stylesheet" href="<?= route('assets/swiperjs/swiper-bundle.min.css') ?>">
 </block>
 
 <block moreHeaders>
-  <button class="btn btn-outline-primary rounded-pill">Export PDF <i class="fas fa-file-export"></i></button>
+  <a href="<?= route('departements/' . $departement->id . '/exportpdf') ?><?= add_annee() ?>" class="btn btn-outline-primary rounded-pill d-flex justify-content-center align-items-center">
+    Export PDF <i class="ms-2 fas fa-file-export"></i>
+  </a>
 </block>
 
 <block content>

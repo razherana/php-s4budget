@@ -221,36 +221,81 @@
 ', ) ?>
 
 <?php if(!empty($mois)): ?>
-  <?php foreach($mois as $mois_): ?>
-    <div class="ncontainer-table" style="height: fit-content !important; overflow-y: auto" id="toPDF">
-      <h1 class="mb-3 text-center"><?= formatMois($mois_) ?> <?= $annee ?></h1>
-      <div
-        class="table-responsive-md px-3">
-        <table class="ntable w-100">
-          <thead>
-            <tr>
-              <th>Categories</th>
-            </tr>
-          </thead>
-          <tbody>
+  <div class="swiper">
+    <div class="swiper-wrapper">
 
-            <!-- Add categories here -->
-            <?php foreach($categories as $categorie): ?>
-              <?php $___vars___->use_template('t_categorie', $categorie + ['mois' => $mois_]); ?>
-            <?php endforeach; ?>
+      <?php foreach($mois as $mois_): ?>
+        <div class="swiper-slide">
 
-            <!-- Add new -->
-            <tr class="spacer">
-              <td style="height: 1em;"></td>
-            </tr>
-            <tr class="addnew" id="addCategorie" onkeypress="this.click()" tabindex="1">
-              <td>Nouvelle Categorie<i class="fa fa-plus ms-1"></i></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+          <div class="ncontainer-table" style="height: fit-content !important; overflow-y: auto" id="toPDF">
+            <div class="d-flex mb-3">
+              <h1 class="text-center"><?= formatMois($mois_) ?> <?= $annee ?></h1>
+              <div class="ms-auto px-3 py-2 d-flex gap-1">
+                <kbd class="d-flex justify-content-center align-items-center bg-dark">
+                  <i class="fas fa-arrow-left" style="color: white;"></i>
+                </kbd>
+                <kbd class="d-flex justify-content-center align-items-center bg-dark">
+                  <i class="fas fa-arrow-right" style="color: white;"></i>
+                </kbd>
+              </div>
+            </div>
+            <div
+              class="table-responsive-md px-3">
+              <table class="ntable w-100">
+                <thead>
+                  <tr>
+                    <th>Categories</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <!-- Add categories here -->
+                  <?php foreach($categories as $categorie): ?>
+                    <?php $___vars___->use_template('t_categorie', $categorie + ['mois' => $mois_]); ?>
+                  <?php endforeach; ?>
+
+                  <!-- Add new -->
+                  <tr class="spacer">
+                    <td style="height: 1em;"></td>
+                  </tr>
+                  <tr class="addnew" id="addCategorie" onkeypress="this.click()" tabindex="1">
+                    <td>Nouvelle Categorie<i class="fa fa-plus ms-1"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      <?php endforeach; ?>
+
     </div>
-  <?php endforeach; ?>
+
+  </div>
+
+  <script src="<?= route('assets/swiperjs/swiper-bundle.min.js') ?>"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const swiper = new Swiper('.swiper', {
+        slidesPerView: 1,
+        spaceBetween: 0,
+
+        centeredSlides: true,
+
+        coverflowEffect: {
+          rotate: 30,
+          slideShadows: false,
+        },
+
+        keyboard: {
+          enabled: true,
+        },
+
+
+      });
+    });
+  </script>
 <?php else: ?>
   <div class="ncontainer-table" style="height: fit-content !important; overflow-y: auto;" id="toPDF">
     <h1 class="mb-3 px-3">Aucune information pour l'Annee <?= $annee ?>.</h1>
