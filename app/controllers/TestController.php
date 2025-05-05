@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use function Piewpiew\piewpiew;
 use flight\Engine;
 
 class TestController

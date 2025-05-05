@@ -14,7 +14,6 @@ $modules = [
 
   "ConfigReader",
   "CheckInput",
-  "Piewpiew",
   "Lorm",
   "Auth",
   "DataTypes",

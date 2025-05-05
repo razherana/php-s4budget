@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace app\controllers;
 
 use app\models\Departement;
+use function Piewpiew\piewpiew;
 use flight\Engine;
 
 class IndexController

@@ -20,6 +20,7 @@ use Ahc\Cli\Input\Parameter;
 use Ahc\Cli\Output\Writer;
 use Throwable;
 
+use function Ahc\Cli\t;
 use function array_map;
 use function array_shift;
 use function asort;
@@ -58,6 +59,8 @@ use const STR_PAD_LEFT;
  */
 class OutputHelper
 {
+    use InflectsString;
+
     protected Writer $writer;
 
     /** @var int Max width of command name */
@@ -77,7 +80,7 @@ class OutputHelper
 
         $this->writer->colors(
             "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
-            "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
+            '(' . t('thrown in') . " <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
         );
 
         // @codeCoverageIgnoreStart
@@ -87,7 +90,7 @@ class OutputHelper
         }
         // @codeCoverageIgnoreEnd
 
-        $traceStr = '<eol/><eol/><bold>Stack Trace:</end><eol/><eol/>';
+        $traceStr = '<eol/><eol/><bold>' . t('Stack Trace') . ':</end><eol/><eol/>';
 
         foreach ($e->getTrace() as $i => $trace) {
             $trace += ['class' => '', 'type' => '', 'function' => '', 'file' => '', 'line' => '', 'args' => []];
@@ -97,7 +100,7 @@ class OutputHelper
             $traceStr .= "  <comment>$i)</end> <red>$symbol</end><comment>($args)</end>";
             if ('' !== $trace['file']) {
                 $file      = realpath($trace['file']);
-                $traceStr .= "<eol/>     <yellow>at $file</end><white>:{$trace['line']}</end><eol/>";
+                $traceStr .= "<eol/>     <yellow>" . t('at') . " $file</end><white>:{$trace['line']}</end><eol/>";
             }
         }
 
@@ -182,13 +185,13 @@ class OutputHelper
     protected function showHelp(string $for, array $items, string $header = '', string $footer = ''): void
     {
         if ($header) {
-            $this->writer->bold($header, true);
+            $this->writer->help_header($header, true);
         }
 
-        $this->writer->eol()->boldGreen($for . ':', true);
+        $this->writer->eol()->help_category(t($for) . ':', true);
 
         if (empty($items)) {
-            $this->writer->bold('  (n/a)', true);
+            $this->writer->help_text('  (n/a)', true);
 
             return;
         }
@@ -197,20 +200,25 @@ class OutputHelper
         $group = $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
-        foreach ($this->sortItems($items, $padLen, $for) as $item) {
+        foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
-                $this->writer->boldYellow($group ?: '*', true);
+                $this->writer->help_group($group ?: '*', true);
                 $lastGroup = $group;
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
-            $this->writer->bold('  ' . str_pad($name, $padLen + $space));
-            $this->writer->comment($desc, true);
+            if ($idx % 2 == 0) {
+                $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_even($desc, true);
+            } else {
+                $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_odd($desc, true);
+            }
         }
 
         if ($footer) {
-            $this->writer->eol()->yellow($footer, true);
+            $this->writer->eol()->help_footer($footer, true);
         }
     }
 
@@ -224,7 +232,7 @@ class OutputHelper
         $usage = str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
 
         if (!str_contains($usage, ' ## ')) {
-            $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
+            $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
 
             return $this;
         }
@@ -241,7 +249,7 @@ class OutputHelper
             return str_pad('# ', $maxlen - array_shift($lines), ' ', STR_PAD_LEFT);
         }, $usage);
 
-        $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
+        $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
 
         return $this;
     }
@@ -256,11 +264,11 @@ class OutputHelper
             }
         }
 
-        $this->writer->error("Command $attempted not found", true);
+        $this->writer->error(t('Command %s not found', [$attempted]), true);
         if ($closest) {
             asort($closest);
             $closest = key($closest);
-            $this->writer->bgRed("Did you mean $closest?", true);
+            $this->writer->bgRed(t('Did you mean %s?', [$closest]), true);
         }
 
         return $this;

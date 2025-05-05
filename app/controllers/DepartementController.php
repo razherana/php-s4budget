@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace app\controllers;
 
+use function Piewpiew\piewpiew;
 use app\models\Budget;
 use app\models\Categorie;
 use app\models\Departement;
@@ -151,6 +152,7 @@ class DepartementController
   public function show($id)
   {
     $departement = Departement::find($id);
+    $categorie_models = $departement->categories;
 
     $annee = $_GET['annee'] ?? null;
 
@@ -198,7 +200,46 @@ class DepartementController
 
     $closedBudget = (bool) $budgetModel->locked;
 
-    piewpiew('pages.departement.departement', compact('annee', 'departement', 'budget', 'departements', 'hasBudget', 'categories', 'budgetFinal', 'closedBudget', 'budgetModel', 'mois'));
+    $categories_json = [];
+    $types_json = [];
+    $type_models = Type::mapToPk();
+
+    foreach ($categorie_models as $categorie) {
+      $categories_json[$categorie->id] = $categorie->designation;
+    }
+
+    foreach ($type_models as $type_model) {
+      if (!isset($categories_json[$type_model->id_categorie]))
+        continue;
+
+      if (!isset($types_json[$type_model->id_categorie]))
+        $types_json[$type_model->id_categorie] = [];
+
+      $types_json[$type_model->id_categorie][] = [
+        'designation' => $type_model->designation,
+        'id_categorie' => $type_model->id_categorie,
+        'id' => $type_model->id,
+      ];
+    }
+
+    $isDepartement = true; // This is just to say that we are in a departement page
+
+    piewpiew('pages.departement.departement', compact(
+      'annee',
+      'departement',
+      'budget',
+      'departements',
+      'hasBudget',
+      'categories',
+      'categorie_models',
+      'budgetFinal',
+      'closedBudget',
+      'budgetModel',
+      'mois',
+      'isDepartement',
+      'categories_json',
+      'types_json',
+    ));
   }
 
   public function toPdf($id)

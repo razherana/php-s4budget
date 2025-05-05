@@ -48,7 +48,11 @@
 
     <div class="d-flex gap-4 ms-auto">
 
-      <?php if(auth()->get()->is_super_admin == 1): ?>
+      <?php
+      // The condition means that if the user is in a departement page or is a super admin, show the add button  
+      ?>
+      <?php if(($isDepartement ?? false) || auth()->get()->is_super_admin == 1): ?>
+
         <a href="#" class="navicons" id="adminProfileDown" data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">
             Add ...
@@ -56,26 +60,56 @@
           <i class="fa-plus-circle fas"></i>
         </a>
         <ul class="dropdown-menu dropdown-menu-left-2" aria-labelledby="adminProfileDown">
-          <li>
-            <a class="dropdown-item" href="<?= route('departements/create') ?>">
-              <i class="fa fa-briefcase"></i>
-              New Departement...
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="<?= route('users/manage') ?>">
-              <i class="fa fa-user"></i>
-              Manage Users...
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="<?= route('import') ?>">
-              <i class="fas fa-file-csv"></i>
-              Import CSV...
-            </a>
-          </li>
+          <?php if(auth()->get()->is_super_admin == 1): ?>
+            <li>
+              <a class="dropdown-item" href="<?= route('departements/create') ?>">
+                <i class="fa fa-briefcase"></i>
+                New Departement...
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="<?= route('users/manage') ?>">
+                <i class="fa fa-user"></i>
+                Manage Users...
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="<?= route('import') ?>">
+                <i class="fas fa-file-csv"></i>
+                Import CSV...
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <?php if($isDepartement ?? false): ?>
+            <li>
+              <a class="dropdown-item" href="#" id="addCategorie">
+                <i class="fa fa-tags"></i>
+                New Categories...
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="#" id="addTypeSelect">
+                <i class="fa fa-tags"></i>
+                New Type...
+              </a>
+            </li>
+
+            <li>
+              <a class="dropdown-item" href="#" id="addPrevisionSelect">
+                <i class="fa fa-calendar"></i>
+                New Prevision...
+              </a>
+            </li>
+          <?php endif; ?>
+
+          <!-- <li>
+          <a class="dropdown-item" href="route('departements/ -->
+
         </ul>
       <?php endif; ?>
+
 
       <a href="#" class="navicons">
         <span class="visually-hidden">

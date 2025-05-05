@@ -171,7 +171,21 @@
 
         <tbody>
 
-          <?php $___vars___->use_template(\'t_prevision\', $previsions + compact(\'mois\')); ?>
+          <?php if(isset($previsions[\'totalPrevision1\'][$mois]) && isset($previsions[\'totalPrevision2\'][$mois])): ?>
+            <i condition="$mois == 5 && (isset($previsions[\'totalPrevision1\'][$mois]) || isset($previsions[\'totalPrevision2\'][$mois]))">
+              <?php
+              //dd($previsions);
+              ?>
+            </i>
+            <?php $___vars___->use_template(\'t_prevision\', $previsions + compact(\'mois\')); ?>
+          <?php else: ?>
+          <?php endif; ?>
+
+          <?php if($mois == 5 && $id == 3): ?>
+            <?php
+            // dd($previsions);
+            ?>
+          <?php endif; ?>
 
           <tr class="spacer">
             <td style="height: 1em;"></td>

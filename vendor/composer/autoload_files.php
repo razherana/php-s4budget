@@ -6,6 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
+    '6594cffae477af99d531f0d3d4c9e533' => $vendorDir . '/adhocore/cli/src/functions.php',
     '4cdafd4a5191caf078235e7dd119fdaf' => $vendorDir . '/flightphp/core/flight/autoload.php',
+    '667aeda72477189d0494fecd327c3641' => $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
     'd507e002f7fce7f0c6dbf1f22edcb902' => $vendorDir . '/tracy/tracy/src/Tracy/functions.php',
+    '0e423a14e27410a071e5d815d3ffc856' => $vendorDir . '/larapack/dd/src/helper.php',
+    '9380f03cc60606759730a69400550778' => $vendorDir . '/razherana/piewpiew/src/init.php',
+    '8df55addd7406a0807f4abbb1fe9d084' => $vendorDir . '/razherana/piewpiew/src/functions.php',
 );

@@ -177,7 +177,22 @@
 
         <tbody>
 
-          <use-template t_prevision vars="$previsions + compact('mois')" />
+          <if condition="isset($previsions['totalPrevision1'][$mois]) && isset($previsions['totalPrevision2'][$mois])">
+            <i condition="$mois == 5 && (isset($previsions['totalPrevision1'][$mois]) || isset($previsions['totalPrevision2'][$mois]))">
+              <?php
+              //dd($previsions);
+              ?>
+            </i>
+            <use-template t_prevision vars="$previsions + compact('mois')" />
+          </if else>
+          <else>
+          </else>
+
+          <if condition="$mois == 5 && $id == 3">
+            <?php
+            // dd($previsions);
+            ?>
+          </if>
 
           <tr class="spacer">
             <td style="height: 1em;"></td>

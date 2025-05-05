@@ -11,8 +11,14 @@ use Tracy\Debugger;
  * @var Engine $app
  */
 
+define('_ds_', DIRECTORY_SEPARATOR);
+
+define("MAIN_DIR", __DIR__ . _ds_ . ".." . _ds_ . "..");
+
 require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'functions.php';
 // require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'libs' . DIRECTORY_SEPARATOR . 'fpdf.php';
+
+define("PIEWPIEW_CONFIG", MAIN_DIR . _ds_ . "app" . _ds_ . "config" . _ds_ . "piewpiew_config");
 
 session_start();
 

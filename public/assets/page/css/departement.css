@@ -148,7 +148,9 @@
 
 #addCategorieForm,
 #addTypeForm,
-#addPrevisionForm {
+#addPrevisionForm,
+#addTypeSelectForm,
+#addPrevisionSelectForm {
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.1490196078);
@@ -159,6 +161,14 @@
   top: 0;
   left: 0;
   z-index: 100;
+  overflow: hidden;
+}
+#addCategorieForm > form,
+#addTypeForm > form,
+#addPrevisionForm > form,
+#addTypeSelectForm > form,
+#addPrevisionSelectForm > form {
+  max-height: 100vh;
   overflow-y: auto;
 }
 

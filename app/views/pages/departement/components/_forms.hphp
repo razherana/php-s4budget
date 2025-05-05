@@ -1,0 +1,307 @@
+<div id="addPrevisionForm" class="hidden">
+  <form action="<?= route('departements/previsions') ?><?= add_annee() ?>" method="post" class="p-5 bg-light col-md-7 mx-auto border rounded-4">
+    <input type="hidden" id="id_type" name="id_type" value="">
+    <div class="d-flex mb-3 align-items-center">
+      <h1 class="m-0">Creer une Prevision</h1>
+      <i class="far fa-window-close ms-auto close" onclick="document.getElementById('addPrevisionForm').classList.toggle('hidden')"></i>
+    </div>
+    <div class="mb-3">
+      <label for="designation" class="form-label">Designation</label>
+      <input
+        type="text"
+        class="form-control"
+        name="designation"
+        id="designation"
+        aria-describedby="nameHelpId"
+        placeholder="Achat de 50kg Riz, Vente de 300 Pains, ..."
+        required />
+      <small id="nameHelpId" class="form-text text-muted">Designation de la nouvelle prevision</small>
+    </div>
+    <div class="mb-3">
+      <label for="realisation" class="form-label">Realisation</label>
+      <input
+        type="number"
+        class="form-control"
+        name="realisation"
+        id="realisation"
+        aria-describedby="realisationHelpId"
+        step="0.01"
+        placeholder="50000, 30000, ..."
+        required />
+      <small id="realisationHelpId" class="form-text text-muted">Realisation de la nouvelle Prevision</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="prevision" class="form-label">Prevision</label>
+      <input
+        type="number"
+        class="form-control"
+        name="prevision"
+        id="prevision"
+        aria-describedby="previsionHelpId"
+        placeholder="50000, 30000, ..." />
+      <small id="previsionHelpId" class="form-text text-muted">Prevision</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="type" class="form-label">Type</label>
+      <select
+        class="form-select"
+        name="type"
+        id="type">
+        <option selected disabled>-- Select one --</option>
+        <option value="0">Depense</option>
+        <option value="1">Recette</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="date" class="form-label">Date</label>
+      <input
+        type="date"
+        class="form-control"
+        name="date"
+        id="date"
+        aria-describedby="dateHelpId"
+        required
+        value="<?= date('Y-m-d') ?>" />
+      <small id="dateHelpId" class="form-text text-muted">Date de la nouvelle prevision</small>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-outline-primary">Creer</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const categorieTypes = {
+    categories: <?= json_encode($categories_json) ?>,
+    types: <?= json_encode($types_json) ?>,
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // We make the select of categories to filter the types
+    const addPrevisionSelectForm = document.getElementById('addPrevisionSelectForm');
+
+    const selectCategorie = addPrevisionSelectForm.querySelector('#id_categorie');
+    const selectType = addPrevisionSelectForm.querySelector('#id_type');
+
+    selectCategorie.addEventListener('change', (e) => {
+      const selectedCategorie = e.target.value;
+      const types = categorieTypes.types[selectedCategorie];
+      console.log(selectedCategorie, categorieTypes.types);
+
+      // Clear the select
+      selectType.innerHTML = '<option selected disabled>-- Select one --</option>';
+
+      // Add the types to the select
+      for (const id in types) {
+        const type = types[id];
+        console.log(type);
+
+        const option = document.createElement('option');
+        option.value = type.id;
+        option.textContent = type.designation;
+        selectType.appendChild(option);
+      }
+    });
+  });
+</script>
+
+<div id="addPrevisionSelectForm" class="hidden">
+  <form action="<?= route('departements/previsions') ?><?= add_annee() ?>" method="post" class="p-5 bg-light col-md-7 mx-auto border rounded-4">
+    <div class="d-flex mb-3 align-items-center">
+      <h1 class="m-0">Creer une Prevision</h1>
+      <i class="far fa-window-close ms-auto close" onclick="document.getElementById('addPrevisionSelectForm').classList.toggle('hidden')"></i>
+    </div>
+
+    <!-- Selects -->
+
+    <div class="mb-3">
+      <label for="id_categorie" class="form-label">Categorie</label>
+      <select
+        class="form-select"
+        name="id_categorie"
+        id="id_categorie"
+        required>
+        <option selected disabled>-- Selectionnez une categorie --</option>
+
+        <foreach loop="$categorie_models as $categorie">
+          <option value="<?= $categorie->id ?>"><?= $categorie->designation ?></option>
+        </foreach>
+      </select>
+
+      <small class="form-text text-muted">Choisissez la categorie</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_type" class="form-label">Type</label>
+      <select
+        class="form-select"
+        name="id_type"
+        id="id_type"
+        required>
+        <option selected disabled>-- Selectionnez un type --</option>
+      </select>
+
+      <small class="form-text text-muted">Choisissez le type</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="designation" class="form-label">Designation</label>
+      <input
+        type="text"
+        class="form-control"
+        name="designation"
+        id="designation"
+        aria-describedby="nameHelpId"
+        placeholder="Achat de 50kg Riz, Vente de 300 Pains, ..."
+        required />
+      <small id="nameHelpId" class="form-text text-muted">Designation de la nouvelle prevision</small>
+    </div>
+    <div class="mb-3">
+      <label for="realisation" class="form-label">Realisation</label>
+      <input
+        type="number"
+        class="form-control"
+        name="realisation"
+        id="realisation"
+        aria-describedby="realisationHelpId"
+        step="0.01"
+        placeholder="50000, 30000, ..."
+        required />
+      <small id="realisationHelpId" class="form-text text-muted">Realisation de la nouvelle Prevision</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="prevision" class="form-label">Prevision</label>
+      <input
+        type="number"
+        class="form-control"
+        name="prevision"
+        id="prevision"
+        aria-describedby="previsionHelpId"
+        placeholder="50000, 30000, ..." />
+      <small id="previsionHelpId" class="form-text text-muted">Prevision</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="type" class="form-label">Type</label>
+      <select
+        class="form-select"
+        name="type"
+        id="type">
+        <option selected disabled>-- Select one --</option>
+        <option value="0">Depense</option>
+        <option value="1">Recette</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="date" class="form-label">Date</label>
+      <input
+        type="date"
+        class="form-control"
+        name="date"
+        id="date"
+        aria-describedby="dateHelpId"
+        required
+        value="<?= date('Y-m-d') ?>" />
+      <small id="dateHelpId" class="form-text text-muted">Date de la nouvelle prevision</small>
+    </div>
+
+    <div>
+      <button type="submit" class="btn btn-outline-primary">Creer</button>
+    </div>
+  </form>
+</div>
+
+<div id="addTypeForm" class="hidden">
+  <form action="<?= route('departements/types') ?><?= add_annee() ?>" method="post" class="p-5 bg-light col-md-7 mx-auto border rounded-4">
+    <input type="hidden" id="id_categorie" name="id_categorie" value="">
+    <div class="d-flex mb-3 align-items-center">
+      <h1 class="m-0">Creer un type</h1>
+      <i class="far fa-window-close ms-auto close" onclick="document.getElementById('addTypeForm').classList.toggle('hidden')"></i>
+    </div>
+    <div class="mb-3">
+      <label for="designation" class="form-label">Designation</label>
+      <input
+        type="text"
+        class="form-control"
+        name="designation"
+        id="designation"
+        aria-describedby="nameHelpId"
+        placeholder="Riz, Ciment, Brique, ..." />
+      <small id="nameHelpId" class="form-text text-muted">Designation du nouveau type</small>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-outline-primary">Creer</button>
+    </div>
+  </form>
+</div>
+
+<div id="addTypeSelectForm" class="hidden">
+  <form action="<?= route('departements/types') ?><?= add_annee() ?>" method="post" class="p-5 bg-light col-md-7 mx-auto border rounded-4">
+    <div class="d-flex mb-3 align-items-center">
+      <h1 class="m-0">Creer un type</h1>
+      <i class="far fa-window-close ms-auto close" onclick="document.getElementById('addTypeSelectForm').classList.toggle('hidden')"></i>
+    </div>
+
+    <div class="mb-3">
+      <label for="id_categorie" class="form-label">Categorie</label>
+      <select
+        class="form-select"
+        name="id_categorie"
+        id="id_categorie"
+        required>
+        <option selected disabled>-- Select une categorie --</option>
+
+        <foreach loop="$categorie_models as $categorie">
+          <option value="<?= $categorie->id ?>"><?= $categorie->designation ?></option>
+        </foreach>
+
+      </select>
+      <small class="form-text text-muted">Choisissez la categorie</small>
+    </div>
+
+    <div class="mb-3">
+      <label for="designation" class="form-label">Designation</label>
+      <input
+        type="text"
+        class="form-control"
+        name="designation"
+        id="designation"
+        aria-describedby="nameHelpId"
+        placeholder="Riz, Ciment, Brique, ..." />
+      <small id="nameHelpId" class="form-text text-muted">Designation du nouveau type</small>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-outline-primary">Creer</button>
+    </div>
+  </form>
+</div>
+
+<div id="addCategorieForm" class="hidden">
+  <form action="<?= route('departements/categories') ?><?= add_annee() ?>" method="post" class="p-5 bg-light col-md-7 mx-auto border rounded-4">
+    <input type="hidden" name="id_departement" value="<?= $departement->id ?>">
+    <div class="d-flex mb-3 align-items-center">
+      <h1 class="m-0">Creer une categorie</h1>
+      <i class="far fa-window-close ms-auto close" onclick="document.getElementById('addCategorieForm').classList.toggle('hidden')"></i>
+    </div>
+    <div class="mb-3">
+      <label for="designation" class="form-label">Designation</label>
+      <input
+        type="text"
+        class="form-control"
+        name="designation"
+        id="designation"
+        aria-describedby="nameHelpId"
+        placeholder="Infrastructure, Nourriture, ..." />
+      <small id="nameHelpId" class="form-text text-muted">Designation de la nouvelle categorie</small>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-outline-primary">Creer</button>
+    </div>
+  </form>
+</div>

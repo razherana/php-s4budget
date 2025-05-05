@@ -13,13 +13,13 @@ namespace Ahc\Cli\Output;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
 
+use function Ahc\Cli\t;
 use function array_intersect_key;
 use function constant;
 use function defined;
 use function lcfirst;
 use function method_exists;
 use function preg_match_all;
-use function sprintf;
 use function str_ireplace;
 use function str_replace;
 use function stripos;
@@ -50,17 +50,41 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
+    public static bool $enabled = true;
+
     protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
     /** @var array Custom styles */
-    protected static array $styles = [];
+    protected static array $styles = [
+        'answer'                => ['fg' => 37, 'mod' => 2],
+        'choice'                => ['fg' => 36],
+        'comment'               => ['fg' => 37, 'mod' => 2],
+        'error'                 => ['fg' => 31],
+        'help_category'         => ['fg' => 32, 'mod' => 1],
+        'help_description_even' => ['fg' => 37, 'mod' => 2],
+        'help_description_odd'  => ['fg' => 37, 'mod' => 2],
+        'help_example'          => ['fg' => 33],
+        'help_footer'           => ['fg' => 33],
+        'help_group'            => ['fg' => 33, 'mod' => 1],
+        'help_header'           => ['fg' => 37, 'mod' => 1],
+        'help_item_even'        => ['fg' => 37, 'mod' => 1],
+        'help_item_odd'         => ['fg' => 37, 'mod' => 1],
+        'help_summary'          => ['fg' => 37, 'mod' => 2],
+        'help_text'             => ['fg' => 37, 'mod' => 1],
+        'info'                  => ['fg' => 34],
+        'logo'                  => ['fg' => 37],
+        'ok'                    => ['fg' => 32],
+        'question'              => ['fg' => 33],
+        'version'               => ['fg' => 37, 'mod' => 1],
+        'warn'                  => ['fg' => 33],
+    ];
 
     /**
      * Returns a line formatted as comment.
      */
     public function comment(string $text, array $style = []): string
     {
-        return $this->line($text, ['mod' => 2] + $style);
+        return $this->line($text, static::$styles['comment'] + $style);
     }
 
     /**
@@ -68,7 +92,7 @@ class Color
      */
     public function error(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::RED] + $style);
+        return $this->line($text, static::$styles['error'] + $style);
     }
 
     /**
@@ -76,7 +100,7 @@ class Color
      */
     public function ok(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::GREEN] + $style);
+        return $this->line($text, static::$styles['ok'] + $style);
     }
 
     /**
@@ -84,7 +108,7 @@ class Color
      */
     public function warn(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::YELLOW] + $style);
+        return $this->line($text, static::$styles['warn'] + $style);
     }
 
     /**
@@ -92,7 +116,23 @@ class Color
      */
     public function info(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::BLUE] + $style);
+        return $this->line($text, static::$styles['info'] + $style);
+    }
+
+    /**
+     * Returns the color code for a 256 background color.
+     */
+    public static function bg256(int $code): string
+    {
+        return "48;5;{$code}";
+    }
+
+    /**
+     * Returns the color code for a 256 foreground color.
+     */
+    public static function fg256(int $code): string
+    {
+        return "38;5;{$code}";
     }
 
     /**
@@ -100,6 +140,10 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
+        if (!self::$enabled || getenv('NO_COLOR')) {
+            return $text;
+        }
+
         $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => 0, 'mod' => null];
 
         $format = $style['bg'] === null
@@ -108,8 +152,8 @@ class Color
 
         $line = strtr($format, [
             ':mod:' => (int) ($style['mod'] ?? $style['bold']),
-            ':fg:'  => (int) $style['fg'],
-            ':bg:'  => (int) $style['bg'] + 10,
+            ':fg:'  => $style['fg'],
+            ':bg:'  => is_int($style['bg']) ? ($style['bg'] + 10) : $style['bg'],
             ':txt:' => $text,
         ]);
 
@@ -154,11 +198,12 @@ class Color
         $style = array_intersect_key($style, $allow);
 
         if (empty($style)) {
-            throw new InvalidArgumentException('Trying to set empty or invalid style');
+            throw new InvalidArgumentException(t('Trying to set empty or invalid style'));
         }
 
-        if (isset(static::$styles[$name]) || method_exists(static::class, $name)) {
-            throw new InvalidArgumentException('Trying to define existing style');
+        $invisible = (isset($style['bg']) && isset($style['fg']) && $style['bg'] === $style['fg']);
+        if ($invisible && method_exists(static::class, $name)) {
+            throw new InvalidArgumentException(t('Built-in styles cannot be invisible'));
         }
 
         static::$styles[$name] = $style;
@@ -175,13 +220,13 @@ class Color
     public function __call(string $name, array $arguments): string
     {
         if (!isset($arguments[0])) {
-            throw new InvalidArgumentException('Text required');
+            throw new InvalidArgumentException(t('Text required'));
         }
 
         [$name, $text, $style] = $this->parseCall($name, $arguments);
 
         if (isset(static::$styles[$name])) {
-            return $this->line($text, $style + static::$styles[$name]);
+            return $this->line($text, static::$styles[$name] + $style);
         }
 
         if (defined($color = static::class . '::' . strtoupper($name))) {
@@ -190,7 +235,7 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
-            throw new InvalidArgumentException(sprintf('Style "%s" not defined', $name));
+            throw new InvalidArgumentException(t('Style "%s" not defined', [$name]));
         }
 
         return $this->{$name}($text, $style);
@@ -210,6 +255,10 @@ class Color
                 $name   = str_ireplace($mod, '', $name);
                 $style += ['bold' => $value];
             }
+        }
+
+        if (isset(static::$styles[strtolower($name)])) {
+            $name = strtolower($name);
         }
 
         if (!preg_match_all('/([b|B|f|F]g)?([A-Z][a-z]+)([^A-Z])?/', $name, $matches)) {

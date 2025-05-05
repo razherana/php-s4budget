@@ -66,6 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  document.querySelector("#addTypeSelect").addEventListener("click", () => {
+    document.getElementById("addTypeSelectForm").classList.toggle("hidden");
+  });
+
   document.querySelectorAll("[data-addPrevision]").forEach((element) => {
     element.addEventListener("click", function () {
       document.getElementById("addPrevisionForm").classList.toggle("hidden");
@@ -73,6 +77,14 @@ document.addEventListener("DOMContentLoaded", function () {
         this.getAttribute("data-type-id");
     });
   });
+
+  document
+    .querySelector("#addPrevisionSelect")
+    .addEventListener("click", () => {
+      document
+        .getElementById("addPrevisionSelectForm")
+        .classList.toggle("hidden");
+    });
 
   const container = document.getElementById("content");
 

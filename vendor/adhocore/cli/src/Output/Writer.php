@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Output;
 
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Terminal;
 
 use function fopen;
@@ -19,7 +20,6 @@ use function max;
 use function method_exists;
 use function str_repeat;
 use function stripos;
-use function strlen;
 use function strpos;
 use function ucfirst;
 
@@ -35,6 +35,7 @@ use const STDOUT;
  *
  * @link    https://github.com/adhocore/cli
  *
+ * @method Writer answer($text, $eol = false)
  * @method Writer bgBlack($text, $eol = false)
  * @method Writer bgBlue($text, $eol = false)
  * @method Writer bgCyan($text, $eol = false)
@@ -124,6 +125,7 @@ use const STDOUT;
  * @method Writer boldYellowBgPurple($text, $eol = false)
  * @method Writer boldYellowBgRed($text, $eol = false)
  * @method Writer boldYellowBgWhite($text, $eol = false)
+ * @method Writer choice($text, $eol = false)
  * @method Writer colors($text)
  * @method Writer comment($text, $eol = false)
  * @method Writer cyan($text, $eol = false)
@@ -143,7 +145,19 @@ use const STDOUT;
  * @method Writer greenBgRed($text, $eol = false)
  * @method Writer greenBgWhite($text, $eol = false)
  * @method Writer greenBgYellow($text, $eol = false)
+ * @method Writer help_category($text, $eol = false)
+ * @method Writer help_description_even($text, $eol = false)
+ * @method Writer help_description_odd($text, $eol = false)
+ * @method Writer help_example($text, $eol = false)
+ * @method Writer help_footer($text, $eol = false)
+ * @method Writer help_group($text, $eol = false)
+ * @method Writer help_header($text, $eol = false)
+ * @method Writer help_item_even($text, $eol = false)
+ * @method Writer help_item_odd($text, $eol = false)
+ * @method Writer help_summary($text, $eol = false)
+ * @method Writer help_text($text, $eol = false)
  * @method Writer info($text, $eol = false)
+ * @method Writer logo($text, $eol = false)
  * @method Writer ok($text, $eol = false)
  * @method Writer purple($text, $eol = false)
  * @method Writer purpleBgBlack($text, $eol = false)
@@ -153,6 +167,7 @@ use const STDOUT;
  * @method Writer purpleBgRed($text, $eol = false)
  * @method Writer purpleBgWhite($text, $eol = false)
  * @method Writer purpleBgYellow($text, $eol = false)
+ * @method Writer question($text, $eol = false)
  * @method Writer red($text, $eol = false)
  * @method Writer redBgBlack($text, $eol = false)
  * @method Writer redBgBlue($text, $eol = false)
@@ -161,6 +176,7 @@ use const STDOUT;
  * @method Writer redBgPurple($text, $eol = false)
  * @method Writer redBgWhite($text, $eol = false)
  * @method Writer redBgYellow($text, $eol = false)
+ * @method Writer version($text, $eol = false)
  * @method Writer warn($text, $eol = false)
  * @method Writer white($text, $eol = false)
  * @method Writer yellow($text, $eol = false)
@@ -174,6 +190,8 @@ use const STDOUT;
  */
 class Writer
 {
+    use InflectsString;
+
     /** @var resource Output file handle */
     protected $stream;
 
@@ -323,7 +341,7 @@ class Writer
 
         $second        = (string) $second;
         $terminalWidth = $this->terminal->width() ?? 80;
-        $dashWidth     = $terminalWidth - (strlen($first) + strlen($second));
+        $dashWidth     = $terminalWidth - ($this->strwidth($first) + $this->strwidth($second));
         // remove left and right margins because we're going to add 1 space on each side (after/before the text).
         // if we don't have a second element, we just remove the left margin
         $dashWidth -= $second === '' ? 1 : 2;

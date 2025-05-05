@@ -21,12 +21,12 @@ use Ahc\Cli\Output\ProgressBar;
 use Ahc\Cli\Output\Writer;
 use Closure;
 
+use function Ahc\Cli\t;
 use function array_filter;
 use function array_keys;
 use function end;
 use function explode;
 use function func_num_args;
-use function sprintf;
 use function str_contains;
 use function strstr;
 
@@ -51,6 +51,10 @@ class Command extends Parser implements Groupable
     protected string $_usage = '';
 
     protected ?string $_alias = null;
+
+    protected string $_logo = '';
+
+    protected string $_help = '';
 
     private array $_events = [];
 
@@ -79,9 +83,9 @@ class Command extends Parser implements Groupable
      */
     protected function defaults(): self
     {
-        $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
-        $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
-        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(
+        $this->option('-h, --help', t('Show help'))->on([$this, 'showHelp']);
+        $this->option('-V, --version', t('Show version'))->on([$this, 'showVersion']);
+        $this->option('-v, --verbosity', t('Verbosity level'), null, 0)->on(
             fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
         );
 
@@ -153,6 +157,24 @@ class Command extends Parser implements Groupable
     }
 
     /**
+     * Sets or gets the ASCII art logo.
+     *
+     * @param string|null $logo
+     *
+     * @return string|self
+     */
+    public function logo(?string $logo = null)
+    {
+        if (func_num_args() === 0) {
+            return $this->_logo;
+        }
+
+        $this->_logo = $logo;
+
+        return $this;
+    }
+
+    /**
      * Registers argument definitions (all at once). Only last one can be variadic.
      */
     public function arguments(string $definitions): self
@@ -174,7 +196,7 @@ class Command extends Parser implements Groupable
         $argument = new Argument($raw, $desc, $default);
 
         if ($this->_argVariadic) {
-            throw new InvalidParameterException('Only last argument can be variadic');
+            throw new InvalidParameterException(t('Only last argument can be variadic'));
         }
 
         if ($argument->variadic()) {
@@ -281,9 +303,7 @@ class Command extends Parser implements Groupable
 
         // Has some value, error!
         if ($values) {
-            throw new RuntimeException(
-                sprintf('Option "%s" not registered', $arg)
-            );
+            throw new RuntimeException(t('Option "%s" not registered', [$arg]));
         }
 
         // Has no value, show help!
@@ -291,20 +311,58 @@ class Command extends Parser implements Groupable
     }
 
     /**
-     * Shows command help then aborts.
+     * Sets or gets the custom help screen contents.
+     *
+     * @param string|null $help
+     *
+     * @return string|self
+     */
+    public function help(?string $help = null): mixed
+    {
+        if (func_num_args() === 0) {
+            return $this->_help;
+        }
+
+        $this->_help = $help;
+
+        return $this;
+    }
+
+    /**
+     * Show custom help screen if one is set, otherwise shows the default one.
      */
     public function showHelp(): mixed
     {
+        if ($help = $this->help()) {
+            $writer = $this->io()->writer();
+            $writer->write($help, true);
+
+            return $this->emit('_exit', 0);
+        }
+
+        return $this->showDefaultHelp();
+    }
+
+    /**
+     * Shows command help then aborts.
+     */
+    public function showDefaultHelp(): mixed
+    {
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
+        $app    = $this->app();
 
-        $io->bold("Command {$this->_name}, version {$this->_version}", true)->eol();
-        $io->comment($this->_desc, true)->eol();
-        $io->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
+        if (($logo = $this->logo()) || ($app && ($logo = $app->logo()) && $app->getDefaultCommand() === $this->_name)) {
+            $io->logo($logo, true);
+        }
+
+        $io->help_header(t('Command') . " {$this->_name}, " . t('version') . " {$this->_version}", true)->eol();
+        $io->help_summary($this->_desc, true)->eol();
+        $io->help_text(t('Usage') . ': ')->help_example("{$this->_name} " . t('[OPTIONS...] [ARGUMENTS...]'), true);
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
+            ->showOptionsHelp($this->allOptions(), '', t('Legend: <required> [optional] variadic...'));
 
         if ($this->_usage) {
             $helper->showUsage($this->_usage);
@@ -318,7 +376,7 @@ class Command extends Parser implements Groupable
      */
     public function showVersion(): mixed
     {
-        $this->writer()->bold($this->_version, true);
+        $this->writer()->version($this->_version, true);
 
         return $this->emit('_exit', 0);
     }

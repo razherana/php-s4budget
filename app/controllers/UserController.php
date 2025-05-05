@@ -6,6 +6,7 @@ namespace app\controllers;
 
 use app\models\Departement;
 use app\models\User;
+use function Piewpiew\piewpiew;
 use flight\Engine;
 
 class UserController
@@ -42,7 +43,7 @@ class UserController
         'name' => $this->app->request()->data->name,
         'email' => $this->app->request()->data->email,
         'password' => $this->app->request()->data->password,
-        'id_departement' => !is_null($this->app->request()->data->departement) ? $this->app->request()->data->departement :-1,
+        'id_departement' => !is_null($this->app->request()->data->departement) ? $this->app->request()->data->departement : -1,
         'is_super_admin' => intval($this->app->request()->data->is_super_admin) ?? 0
       ]
     );
